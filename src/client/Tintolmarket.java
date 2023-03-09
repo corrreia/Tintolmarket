@@ -20,7 +20,7 @@ public class Tintolmarket {
         
         if (args.length < 2){
             System.out.println("Not enough arguments");
-            System.exit(1);.
+            System.exit(1);
             
         }
         
