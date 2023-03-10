@@ -10,7 +10,7 @@ public class TintolmarketServer {
     private static final String FILENAME = "credentials.txt";
 
 	public static void main(String[] args) {
-		System.out.println("--------------------------------=TintolmarketServer=--------------------------------");
+		System.out.println("------------------------=TintolmarketServer=------------------------");
 		TintolmarketServer server = new TintolmarketServer();
         if(args.length > 0){
             try {
@@ -38,7 +38,7 @@ public class TintolmarketServer {
          
 		while(true) {
 			try {
-                System.out.println("Server listening on port " + port);
+                System.out.println("Server listening on port " + port + "...");
 				Socket inSoc = sSoc.accept();
 				ServerThread newServerThread = new ServerThread(inSoc);
 				newServerThread.start();
@@ -59,7 +59,7 @@ public class TintolmarketServer {
 
 		ServerThread(Socket inSoc) {
 			socket = inSoc;
-			System.out.println("thread do server para cada cliente");
+			System.out.println("Thread created for new client");
 		}
  
 		public void run(){
@@ -79,13 +79,17 @@ public class TintolmarketServer {
 				}
 				
 				boolean isAuthenticated = checkCredentials(userID, passwd);
+                outStream.writeObject(isAuthenticated);
  			
-				if (!isAuthenticated && userID.length() != 0 && passwd.length() != 0){
-                    isAuthenticated = true;
-                    writeUsers(userID, passwd);
-                    outStream.writeObject(true);
+				if (!isAuthenticated){
+                    if(userID.length() != 0 && passwd.length() != 0){
+                        isAuthenticated = true;
+                        writeUsers(userID, passwd);
+                        outStream.writeObject(true);    
+                    }
                 } else {
-                    outStream.writeObject(false);}
+                    outStream.writeObject(false);
+                }
 
 				outStream.close();
 				inStream.close();

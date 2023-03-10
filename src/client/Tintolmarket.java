@@ -14,16 +14,19 @@ import java.net.*;
 import java.util.*;
 
 public class Tintolmarket {
+
+    private static final int DEFAULT_PORT = 12345;
+
     public static void main(String[] args) throws IOException {
         String serverAddress = "localhost";
-        int port = 12345;
+        int port = DEFAULT_PORT;
         String clientID;
         String password;
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         
         if (args.length < 2){
             System.out.println("Not enough arguments");
             System.exit(1);
-            
         }
         
         //parse serverAddress
@@ -37,8 +40,12 @@ public class Tintolmarket {
                 System.exit(1);
             }
         }else{
-            System.out.println("No port number specified. Defaulting to " + port);
+            System.out.println("No port number specified. Defaulting to " + DEFAULT_PORT);
         }
+
+        Socket socket = new Socket(serverAddress, port);
+        ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
+        ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
 
         //parse clientID
         clientID = args[1];
@@ -48,8 +55,21 @@ public class Tintolmarket {
             password = args[2];
         }else{
             System.out.println("No password specified. Please enter password:");
-            Scanner scanner = new Scanner(System.in);
-            password = scanner.nextLine();
+            password = stdIn.readLine();
+        }
+
+        outStream.writeObject(clientID);
+        outStream.writeObject(password);
+
+        try {
+            if ((Boolean) inStream.readObject()){
+                System.out.println("Login successful! :)\n");
+            }else{
+                System.out.println("Login failed! :(\n");
+                System.exit(1);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
         //debug print
@@ -57,6 +77,10 @@ public class Tintolmarket {
         System.out.println("Port: " + port);
         System.out.println("Client ID: " + clientID);
         System.out.println("Password: " + password);
-        
+
+        outStream.close();
+        inStream.close();
+
+        socket.close();
     }
 }
