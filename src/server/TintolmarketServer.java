@@ -1,12 +1,13 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+package server;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 //Servidor myServer
 
 public class TintolmarketServer {
+    private static final String FILENAME = "credentials.txt";
 
 	public static void main(String[] args) {
 		System.out.println("--------------------------------=TintolmarketServer=--------------------------------");
@@ -79,12 +80,12 @@ public class TintolmarketServer {
 				
 				boolean isAuthenticated = checkCredentials(userID, passwd);
  			
-				if (userID.length() != 0){
-					outStream.writeObject(new Boolean(true));
-				}
-				else {
-					outStream.writeObject(new Boolean(false));
-				}
+				if (!isAuthenticated && userID.length() != 0 && passwd.length() != 0){
+                    isAuthenticated = true;
+                    writeUsers(userID, passwd);
+                    outStream.writeObject(true);
+                } else {
+                    outStream.writeObject(false);}
 
 				outStream.close();
 				inStream.close();
@@ -92,12 +93,60 @@ public class TintolmarketServer {
 				socket.close();
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Connection closed.");
+			} finally {
+				try {
+					if (socket != null) {
+						socket.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
-        private boolean checkCredentials(String userID, String passwd) {
-            return false;
+        private void writeUsers(String userID, String passwd) {
+            try {
+				String fileP = FILENAME;
+				File file = new File(fileP);
+				FileOutputStream fs = new FileOutputStream(file, true);
+				fs.write((userID + ":" + passwd).getBytes());
+				fs.write(System.lineSeparator().getBytes());
+				fs.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+
+        private boolean checkCredentials(String userID, String passwd) throws IOException {
+            File file = new File(FILENAME);
+			if (file.exists()) {
+				FileInputStream fin = new FileInputStream(file);
+				InputStream input = new BufferedInputStream(fin);
+				try {
+					byte[] buffer = new byte[1024];
+					StringBuilder sb = new StringBuilder();
+					int bytesRead;
+					while ((bytesRead = input.read(buffer)) != -1) {
+						sb.append(new String(buffer, 0, bytesRead));
+					}
+					String[] lines = sb.toString().split("\\r?\\n");
+					for (String line : lines) {
+						String[] parts = line.split(":");
+						if (parts.length == 2 && parts[0].equals(userID) && parts[1].equals(passwd)) {
+							System.out.println("User is in the system, logging in...");
+							return true;
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					if (input != null) {
+						input.close();
+					}
+				}
+			}
+			return false;
         }
 	}
 }

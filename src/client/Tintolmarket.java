@@ -1,3 +1,5 @@
+package client;
+
 // Tintolmarket <serverAddress> <userID> [password]
 // Em que:
 // • <serverAddress> identifica o servidor. O formato de serverAddress é o seguinte:
