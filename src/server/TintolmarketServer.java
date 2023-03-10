@@ -79,16 +79,21 @@ public class TintolmarketServer {
 				}
 				
 				boolean isAuthenticated = checkCredentials(userID, passwd);
-                outStream.writeObject(isAuthenticated);
- 			
-				if (!isAuthenticated){
+
+                if (isAuthenticated){
+                    System.out.println("Recorrent user" + userID + " authenticated!\n");
+                    outStream.writeObject(isAuthenticated);
+                } else {
+                    System.out.println("User not in the system!");
                     if(userID.length() != 0 && passwd.length() != 0){
+                        System.out.println("New user: " + userID + " with password: " + passwd);
+                        System.out.println("New user registered!\n");
                         isAuthenticated = true;
                         writeUsers(userID, passwd);
                         outStream.writeObject(true);    
+                    } else {
+                        outStream.writeObject(false);
                     }
-                } else {
-                    outStream.writeObject(false);
                 }
 
 				outStream.close();

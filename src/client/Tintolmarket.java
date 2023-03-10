@@ -61,8 +61,10 @@ public class Tintolmarket {
         outStream.writeObject(clientID);
         outStream.writeObject(password);
 
+
         try {
-            if ((Boolean) inStream.readObject()){
+            boolean loginSuccessful = (Boolean) inStream.readObject();
+            if (loginSuccessful){
                 System.out.println("Login successful! :)\n");
             }else{
                 System.out.println("Login failed! :(\n");
