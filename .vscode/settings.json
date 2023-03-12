@@ -1,9 +1,0 @@
-{
-    "java.project.sourcePaths": [
-        "TintoMarketServer/src"
-    ],
-    "java.project.outputPath": "TintoMarketServer/bin",
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ]
-}
