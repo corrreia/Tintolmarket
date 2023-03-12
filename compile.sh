@@ -1,33 +1,33 @@
 #! /bin/bash
 
-SERVER_JAVA_FILES="src/server/"
-CLIENT_JAVA_FILES="src/client/"
+SERVER_JAVA_FILES="TintoIMarketServer/src/main/"
+CLIENT_JAVA_FILES="TintoIMarket/src/main/"
 
-SERVER_CLASS_FILES="bin/"
-CLIENT_CLASS_FILES="bin/"
+SERVER_CLASS_FILES="TintoIMarketServer/bin/"
+CLIENT_CLASS_FILES="TintoIMarket/bin/"
 
 OUTPUT_DIR="out/"
 
 
-if [ ! -d "$OUTPUT_DIR_SERVER" ]; then #create server bin directory if it doesn't exist
-    echo "Creating output directory for server"
-    mkdir -p $OUTPUT_DIR_SERVER
+if [ ! -d "$SERVER_CLASS_FILES" ]; then #create server bin directory if it doesn't exist
+    echo "Creating bin directory for server"
+    mkdir -p $SERVER_CLASS_FILES
 fi
 
-if [ ! -d "$OUTPUT_DIR_CLIENT" ]; then #create client bin directory if it doesn't exist
-    echo "Creating output directory for client"
-    mkdir -p $OUTPUT_DIR_CLIENT
+if [ ! -d "$CLIENT_CLASS_FILES" ]; then #create client bin directory if it doesn't exist
+    echo "Creating bin directory for client"
+    mkdir -p $CLIENT_CLASS_FILES
 fi
 
 echo "Compiling server files"
-javac -d $SERVER_CLASS_FILES $SERVER_JAVA_FILES/*.java
+javac  $SERVER_JAVA_FILES/*.java -d $SERVER_CLASS_FILES
 
 echo "Compiling client files"
-javac -d $CLIENT_CLASS_FILES $CLIENT_JAVA_FILES/*.java
+javac $CLIENT_JAVA_FILES/*.java -d $CLIENT_CLASS_FILES
 
-if [ ! -d "$SERVER_CLASS_FILES" ]; then  #create output directory if it doesn't exist
-    echo "Creating class directory for server"
-    mkdir -p $SERVER_CLASS_FILES
+if [ ! -d "$OUTPUT_DIR" ]; then 
+    echo "Creating bin directory for client"
+    mkdir -p $OUTPUT_DIR
 fi
 
 echo "Building server jar"

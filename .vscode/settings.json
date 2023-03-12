@@ -1,0 +1,6 @@
+{
+    "java.project.sourcePaths": [
+        "Tintolmarket/src",
+        "TintolmarketServer/src"
+    ]
+}
