@@ -1,13 +1,4 @@
-package client;
-
-// Tintolmarket <serverAddress> <userID> [password]
-// Em que:
-// • <serverAddress> identifica o servidor. O formato de serverAddress é o seguinte:
-// <IP/hostname>[:Port]. O endereço IP ou o hostname do servidor são obrigatórios e o porto
-// é opcional. Por omissão, o cliente deve ligar-se ao porto 12345 do servidor.
-// • <clientID> identifica o utilizador local.
-// • [password] – password utilizada para autenticar o utilizador local. Caso a password não
-// seja dada na linha de comando, deve ser pedida ao utilizador pela aplicação.
+package src;
 
 import java.io.*;
 import java.net.*;

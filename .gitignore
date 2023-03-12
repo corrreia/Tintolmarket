@@ -1,3 +1,5 @@
 *.class
 *.jar
-credentials.txt
+*\credentials.txt
+*\bin
+.vscode
