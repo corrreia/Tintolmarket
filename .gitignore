@@ -1,0 +1,4 @@
+*.class
+*.jar
+.vscode
+*/credentials.txt
