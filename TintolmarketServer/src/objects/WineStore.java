@@ -53,5 +53,4 @@ public class WineStore extends Wine{
     public String toString(){
         return "Wine [evaluation=" + evaluation + ", id=" + getId() + ", image=" + image + ", name=" + getName() + "]";
     }
-    
 }

@@ -32,5 +32,4 @@ public class Wine {
     public String toString() {
         return "Wine [evaluation=" + ", id=" + id + ", image=" + ", name=" + name + "]";
     }
-    
 }

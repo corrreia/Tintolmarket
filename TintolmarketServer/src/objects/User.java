@@ -18,25 +18,22 @@ public class User {
         this.wines = new LinkedList<WineUser>();
     }
 
-    public void addWine(WineUser wine) {
+    public void addWineListing(WineUser wine) {
         this.wines.add(wine);
     }
 
     public void removeWine(int wineId) {
-        for (WineUser wine : this.wines) {
+        for (WineUser wine : this.wines) 
             if (wine.getId() == wineId) {
                 this.wines.remove(wine);
                 break;
             }
-        }
     }
 
     public WineUser getWine(int wineId) {
-        for (WineUser wine : this.wines) {
-            if (wine.getId() == wineId) {
+        for (WineUser wine : this.wines) 
+            if (wine.getId() == wineId) 
                 return wine;
-            }
-        }
         return null;
     }
 
@@ -52,17 +49,19 @@ public class User {
         return balance;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // public void setId(int id) {
+    //     this.id = id;
+    // }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setBalance(float balance) {
-        this.balance = balance;
-    }
+   public void setBalance(float balance) {
+    if (balance < 0)
+        throw new IllegalArgumentException("Balance cannot be negative");
+    this.balance = balance;
+}
 
     @Override
     public String toString() {
