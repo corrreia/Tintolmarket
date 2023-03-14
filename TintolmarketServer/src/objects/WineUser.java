@@ -11,6 +11,14 @@ public class WineUser extends Wine {
         this.quantity = quantity;
     }
 
+    public void addQuantity(int quantity) {
+        this.quantity += quantity;
+    }
+
+    public void removeQuantity(int quantity) {
+        this.quantity -= quantity;
+    }
+
     public float getPrice() {
         return price;
     }

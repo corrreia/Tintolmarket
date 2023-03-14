@@ -8,13 +8,36 @@ public class User {
 
     private int id;
     private String name;
+    private float balance;
     private LinkedList<WineUser> wines;
 
-    public User(int id, String name) {
+    public User(int id, String name, float balance) {
         this.id = id;
         this.name = name;
-
+        this.balance = balance;
         this.wines = new LinkedList<WineUser>();
+    }
+
+    public void addWine(WineUser wine) {
+        this.wines.add(wine);
+    }
+
+    public void removeWine(int wineId) {
+        for (WineUser wine : this.wines) {
+            if (wine.getId() == wineId) {
+                this.wines.remove(wine);
+                break;
+            }
+        }
+    }
+
+    public WineUser getWine(int wineId) {
+        for (WineUser wine : this.wines) {
+            if (wine.getId() == wineId) {
+                return wine;
+            }
+        }
+        return null;
     }
 
     public int getId() {
@@ -25,8 +48,8 @@ public class User {
         return name;
     }
 
-    public LinkedList<WineUser> getWines() {
-        return wines;
+    public float getBalance() {
+        return balance;
     }
 
     public void setId(int id) {
@@ -37,12 +60,8 @@ public class User {
         this.name = name;
     }
 
-    public void setWines(LinkedList<WineUser> wines) {
-        this.wines = wines;
-    }
-
-    public void addWine(WineUser wine) {
-        this.wines.add(wine);
+    public void setBalance(float balance) {
+        this.balance = balance;
     }
 
     @Override
