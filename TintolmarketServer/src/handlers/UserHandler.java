@@ -34,6 +34,7 @@ public class UserHandler {
             String[] user = line.split(":");
             if (user[0].equals(userID)) {
                 System.out.println("User " + userID + " is already registered");
+                br.close();
                 return true;
             }
         }
@@ -47,9 +48,11 @@ public class UserHandler {
         while ((line = br.readLine()) != null) {
             String[] user = line.split(":");
             if (user[0].equals(userID) && user[1].equals(passwd)) {
+                br.close();
                 return true;
             }
         }
+        br.close();
         return false;
     }
 }
