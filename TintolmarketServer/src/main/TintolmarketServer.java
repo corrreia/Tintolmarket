@@ -1,5 +1,6 @@
 package main;
 
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,6 +27,7 @@ public class TintolmarketServer {
 				server.startServer(12345);
 			} else {
 				int port = Integer.parseInt(args[0]);
+				System.out.println("Using port " + port);
 				server.startServer(port);
 			}
 
