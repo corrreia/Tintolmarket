@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.ParseException;
+import java.util.List;
 import java.util.PrimitiveIterator.OfDouble;
 
 public class OperationMenu {
@@ -104,13 +106,58 @@ public class OperationMenu {
         }
     }
 
-    private void classify(String wine, String stars) {
+    private void classify(String wine, String stars) throws IOException {
+        // parse stars to float
+        float starsFloat = Float.parseFloat(stars);
+        if (starsFloat < 1 || starsFloat > 5) {
+            System.out.println("Stars must be between 1 and 5. Please try again.");
+        } else {
+            operation = "classify: " + wine + " " + stars;
+            outStream.writeObject(operation);
+            outStream.flush();
+
+            int serverResponse = inStream.readInt();
+            if (serverResponse == 0){
+                System.out.println(wine + " classified successfully.");
+            } else {
+                System.out.println(wine + " does not exist. Please try again.");
+            }
+        }
     }
 
-    private void talk(String user, String message) {
+    private void talk(String user, String message) throws IOException{
+        operation = "talk: " + user + " " + message;
+        outStream.writeObject(operation);
+        outStream.flush();
+
+        int serverResponse = inStream.readInt();
+        if(serverResponse == 0){
+            System.out.println("Message sent successfully.");
+        } else {
+            System.out.println("User " + user + " does not exist. Please try again.");
+        }
     }
 
-    private void read() {
+    private void read() throws IOException, ClassNotFoundException {
+        operation = "read";
+        outStream.writeObject(operation);
+        outStream.flush();
+        
+        int serverResponse = inStream.readInt();
+        if (serverResponse == 0){
+            @SuppressWarnings("unchecked")
+            List<String> messages = (List<String>) inStream.readObject();
+
+			System.out.println("\n--------------------- Inbox --------------------\n"); 
+            if(messages.isEmpty()){
+                System.out.println("No messages.");
+            } else {
+                for(String msg : messages){
+                    System.out.println(msg);
+                }
+            }
+            System.out.println("\n------------------------------------------------\n"); 
+        }
     }
 
     private void incorrectOperation() {
