@@ -9,7 +9,7 @@ public class WineUser extends Wine {
         super(id, name);
         if (price > 0)
             this.price = price;
-        if (quantity > 0) 
+        if (quantity > 0)
             this.quantity = quantity;
     }
 
@@ -20,7 +20,7 @@ public class WineUser extends Wine {
     }
 
     public void removeQuantity(int quantity) {
-        if (this.quantity - quantity < 0) 
+        if (this.quantity - quantity < 0)
             throw new IllegalStateException("Quantity cannot be negative");
         this.quantity -= quantity;
     }
@@ -34,14 +34,14 @@ public class WineUser extends Wine {
     }
 
     public void setPrice(float price) {
-        if (price < 0) 
+        if (price < 0)
             throw new IllegalArgumentException("Price cannot be negative");
-        else 
+        else
             this.price = price;
     }
 
     public void setQuantity(int quantity) {
-        if(quantity < 0)
+        if (quantity < 0)
             throw new IllegalArgumentException("Quantity must be >= 0");
         this.quantity = quantity;
     }

@@ -5,29 +5,44 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class UserHandler {
 
-    private static final String FILE_NAME = "credentials.txt";
-    private File userFile;
+    private ObjectOutputStream outStream = null;
+    private ObjectInputStream inStream = null;
+    private static String username = null;
 
-    public UserHandler() throws IOException {
+    private static final String FILE_NAME = "credentials.txt";
+    private static File userFile;
+
+    private UserHandler(String username, ObjectInputStream inStream, ObjectOutputStream outStream) throws IOException {
         this.userFile = new File(FILE_NAME);
+
+        this.outStream = outStream;
+        this.inStream = inStream;
+        this.username = username;
+
         if (!userFile.exists()) {
-            userFile.createNewFile();
-        }
+            if (!userFile.createNewFile()) {
+                throw new IOException("Could not create file " + userFile.getAbsolutePath());
+            }
+            System.out.println("user:password file created successfully");
+        } else
+            System.out.println("Using existing user:password file");
     }
 
-    public void registerUser(String userID, String passwd) throws IOException {
-        
+    private static boolean registerUser(String userID, String passwd) throws IOException {
         FileOutputStream fs = new FileOutputStream(userFile, true);
         fs.write((userID + ":" + passwd).getBytes());
         fs.write(System.lineSeparator().getBytes());
         System.out.println("New user " + userID + " registered successfully");
         fs.close();
+        return true;
     }
 
-    public boolean isRegistered(String userID) throws IOException {
+    private static boolean isRegistered(String userID) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(userFile));
         String line;
         while ((line = br.readLine()) != null) {
@@ -42,7 +57,7 @@ public class UserHandler {
         return false;
     }
 
-    public boolean checkCredentials(String userID, String passwd) throws IOException {
+    private static boolean checkCredentials(String userID, String passwd) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(userFile));
         String line;
         while ((line = br.readLine()) != null) {
@@ -54,5 +69,33 @@ public class UserHandler {
         }
         br.close();
         return false;
+    }
+
+    public static UserHandler authenticate(String username, String password, ObjectInputStream inStream,
+            ObjectOutputStream outStream) throws IOException {
+
+        if (isRegistered(username)) {
+            outStream.writeInt(1);
+            if (checkCredentials(username, password)) {
+                outStream.writeObject(true);
+                System.out.println("User " + username + " logged in successfully! :)\n");
+                return new UserHandler(username, inStream, outStream);
+
+            } else {
+                outStream.writeObject(false);
+                throw new IOException("Wrong password for user " + username);
+            }
+        } else {
+            outStream.writeInt(0);
+            registerUser(username, password);
+            outStream.writeObject(true);
+            throw new IOException("User " + username + " registered successfully! :)\n"); // not sure if this should be
+                                                                                          // an exception
+        }
+    }
+
+    public void handleOps() throws IOException {
+        // TODO: implement this to work with the operation handler
+        // by now username, inStream and outStream are available and fully functional
     }
 }

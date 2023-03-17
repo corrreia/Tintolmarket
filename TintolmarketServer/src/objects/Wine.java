@@ -1,8 +1,8 @@
 package objects;
 
 public class Wine {
-        //WINES:
-    // id, name, evaluation, image 
+    // WINES:
+    // id, name, evaluation, image
 
     private int id;
     private String name;

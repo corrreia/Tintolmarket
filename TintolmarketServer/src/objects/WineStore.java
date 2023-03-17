@@ -1,6 +1,6 @@
 package objects;
 
-public class WineStore extends Wine{
+public class WineStore extends Wine {
 
     private String image;
     private float evaluation;
@@ -50,7 +50,7 @@ public class WineStore extends Wine{
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Wine [evaluation=" + evaluation + ", id=" + getId() + ", image=" + image + ", name=" + getName() + "]";
     }
 }
