@@ -4,15 +4,13 @@ import java.util.LinkedList;
 
 public class User {
     //USERS:
-    // id , name, wines (id of wines, price, quantity), inbox (for messages)
+    // name, wines (id of wines, price, quantity), inbox (for messages)
 
-    private int id;
     private String name;
     private float balance;
     private LinkedList<WineUser> wines;
 
-    public User(int id, String name, float balance) {
-        this.id = id;
+    public User(String name, float balance) {
         this.name = name;
         this.balance = balance;
         this.wines = new LinkedList<WineUser>();
@@ -37,10 +35,6 @@ public class User {
         return null;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
@@ -48,10 +42,6 @@ public class User {
     public float getBalance() {
         return balance;
     }
-
-    // public void setId(int id) {
-    //     this.id = id;
-    // }
 
     public void setName(String name) {
         this.name = name;
@@ -65,6 +55,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", wines=" + wines + "]";
+        return "User [name=" + name + ", wines=" + wines + "]";
     }
 }

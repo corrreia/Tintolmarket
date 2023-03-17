@@ -11,17 +11,25 @@ public class StateHandler {
     private static final String USERS_JSON = "users.json";
     private static final String WINES_JSON = "wines.json";
 
+    //return codes
+    public static final int SUCCESS = 0;
+    public static final int WINE_DOES_NOT_EXIST = -1;
+    public static final int SELLER_DOES_NOT_EXIST = -2;
+    public static final int USER_DOES_NOT_EXIST = -3;
+    public static final int SELLER_DOES_NOT_HAVE_WINE = -4;
+    public static final int SELLER_DOES_NOT_HAVE_ENOUGH_WINE = -5;
+    public static final int BUYER_DOES_NOT_HAVE_ENOUGH_MONEY = -6;
+
     private static StateHandler instance = null;
 
     //--- these need to be saved to a json file
-    private HashMap<Integer, User> users;
+    private HashMap<String, User> users;
     private HashMap<Integer, WineStore> wines;
-    private static int nextUserId = 0;
     private static int nextWineId = 0;
     //---
 
     private StateHandler() {
-        this.users = new HashMap<Integer, User>();
+        this.users = new HashMap<String, User>();
         this.wines = new HashMap<Integer, WineStore>();
     }
 
@@ -32,9 +40,8 @@ public class StateHandler {
     }
 
     public void registerUser(String name) {
-        User user = new User(nextUserId, name, STARTING_BALANCE);
-        this.users.put(nextUserId, user);
-        nextUserId++;
+        User user = new User(name, STARTING_BALANCE);
+        this.users.put(name, user);
     }
 
     public void registerWine(String name, String image) {
@@ -43,52 +50,83 @@ public class StateHandler {
         nextWineId++;
     }
 
-    public void addWineListingToUser(int userId, int wineId, int quantity, float price) {
-        if (!wines.containsKey(wineId))
-            throw new IllegalArgumentException("Wine does not exist");
+    public int addWineListingToUser(String user, int wineId, int quantity, float price) {
+        if (!wines.containsKey(wineId)) // Wine does not exist
+            return WINE_DOES_NOT_EXIST;
         
-        if (!users.containsKey(userId))
-            throw new IllegalArgumentException("User does not exist");
+        if (!users.containsKey(user)) // User does not exist
+            return USER_DOES_NOT_EXIST;
 
         WineStore wine = wines.get(wineId);
-        users.get(userId).addWineListing(new WineUser(wineId, wine.getName(), price, quantity));
+        users.get(user).addWineListing(new WineUser(wineId, wine.getName(), price, quantity));
+
+        return 0; // Success
     }
 
-    public void buySellWine(int sellerID, int buyerID, int wineID, int quantity) {
-        if (!wines.containsKey(wineID))
-            throw new IllegalArgumentException("Wine does not exist");
+    public int buySellWine(String seller, String buyer, int wineID, int quantity) {
+        if (!wines.containsKey(wineID))  // Wine does not exist
+            return WINE_DOES_NOT_EXIST;
         
-        if (!users.containsKey(sellerID))
-            throw new IllegalArgumentException("Seller does not exist");
+        if (!users.containsKey(seller)) // Seller does not exist
+            return SELLER_DOES_NOT_EXIST;
 
-        if (!users.containsKey(buyerID))
-            throw new IllegalArgumentException("Buyer does not exist");
+        if (!users.containsKey(buyer)) // Buyer does not exist
+            return USER_DOES_NOT_EXIST;
 
-        WineUser wine = users.get(sellerID).getWine(wineID);
-        if (wine == null)
-            throw new IllegalArgumentException("Seller does not have this wine");
+        WineUser wine = users.get(seller).getWine(wineID); 
+        if (wine == null) // Seller does not have wine
+            return SELLER_DOES_NOT_HAVE_WINE;
 
-        if (wine.getQuantity() < quantity)
-            throw new IllegalArgumentException("Seller does not have enough wine");
+        if (wine.getQuantity() < quantity) // Seller does not have enough wine
+            return SELLER_DOES_NOT_HAVE_ENOUGH_WINE;
 
-        User seller = users.get(sellerID);
-        User buyer = users.get(buyerID);
+        User sellerO = users.get(seller);
+        User buyerO = users.get(buyer);
 
         float price = wine.getPrice() * quantity;
-        if (buyer.getBalance() < price)
-            throw new IllegalArgumentException("Buyer does not have enough money");
+        if (buyerO.getBalance() < price) // Buyer does not have enough money
+            return BUYER_DOES_NOT_HAVE_ENOUGH_MONEY;
 
-        seller.setBalance(seller.getBalance() + price);
-        buyer.setBalance(buyer.getBalance() - price);
+        sellerO.setBalance(sellerO.getBalance() + price);
+        buyerO.setBalance(buyerO.getBalance() - price);
 
         wine.setQuantity(wine.getQuantity() - quantity);
         if (wine.getQuantity() == 0)
-            seller.removeWine(wineID);
+            sellerO.removeWine(wineID);
+
+        return SUCCESS;
     }
 
-    public float getBalance(int userID){
-        if (!users.containsKey(userID))
-            throw new IllegalArgumentException("User does not exist");
-        return users.get(userID).getBalance();
+    public float getBalance(String user){
+        if (!users.containsKey(user))
+            return USER_DOES_NOT_EXIST;
+        return users.get(user).getBalance();
+    }
+
+
+    public void syncUsersJson() {
+        //TODO
+    }
+
+    public void syncWinesJson() {
+        //TODO
+    }
+
+    public void syncJson() {
+        syncUsersJson();
+        syncWinesJson();
+    }
+
+    public void loadUsersJson() {
+        //TODO
+    }
+
+    public void loadWinesJson() {
+        //TODO
+    }
+
+    public void loadJson() {
+        loadUsersJson();
+        loadWinesJson();
     }
 }
