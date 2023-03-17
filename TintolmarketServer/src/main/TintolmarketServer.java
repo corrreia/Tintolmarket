@@ -58,7 +58,6 @@ public class TintolmarketServer {
 		    catch (IOException e) {
 		        e.printStackTrace();
 		    }
-		    
 		}
 		//sSoc.close();
 	}
@@ -121,6 +120,7 @@ public class TintolmarketServer {
 		UserHandler userHandler = new UserHandler();
 
 		if(userHandler.isRegistered(username)) {
+			outStream.writeInt(1);
 			boolean loginSuccessful = userHandler.checkCredentials(username, password);
 			if(loginSuccessful) {
 				outStream.writeObject(true);
@@ -130,6 +130,7 @@ public class TintolmarketServer {
 				System.out.println("Login failed! :(\n");
 			}
 		} else {
+			outStream.writeInt(0);
 			userHandler.registerUser(username, password);
 			outStream.writeObject(true);
 		}
