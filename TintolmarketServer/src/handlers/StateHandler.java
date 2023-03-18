@@ -11,7 +11,7 @@ public class StateHandler {
     private static final String USERS_JSON = "users.json";
     private static final String WINES_JSON = "wines.json";
 
-    //return codes
+    // return codes
     public static final int SUCCESS = 0;
     public static final int WINE_DOES_NOT_EXIST = -1;
     public static final int SELLER_DOES_NOT_EXIST = -2;
@@ -22,19 +22,19 @@ public class StateHandler {
 
     private static StateHandler instance = null;
 
-    //--- these need to be saved to a json file
+    // --- these need to be saved to a json file
     private HashMap<String, User> users;
     private HashMap<Integer, WineStore> wines;
     private static int nextWineId = 0;
-    //---
+    // ---
 
     private StateHandler() {
         this.users = new HashMap<String, User>();
         this.wines = new HashMap<Integer, WineStore>();
     }
 
-    public static StateHandler getInstance() {  // Singleton
-        if (instance == null) 
+    public static StateHandler getInstance() { // Singleton
+        if (instance == null)
             instance = new StateHandler();
         return instance;
     }
@@ -53,7 +53,7 @@ public class StateHandler {
     public int addWineListingToUser(String user, int wineId, int quantity, float price) {
         if (!wines.containsKey(wineId)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
-        
+
         if (!users.containsKey(user)) // User does not exist
             return USER_DOES_NOT_EXIST;
 
@@ -64,16 +64,16 @@ public class StateHandler {
     }
 
     public int buySellWine(String seller, String buyer, int wineID, int quantity) {
-        if (!wines.containsKey(wineID))  // Wine does not exist
+        if (!wines.containsKey(wineID)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
-        
+
         if (!users.containsKey(seller)) // Seller does not exist
             return SELLER_DOES_NOT_EXIST;
 
         if (!users.containsKey(buyer)) // Buyer does not exist
             return USER_DOES_NOT_EXIST;
 
-        WineUser wine = users.get(seller).getWine(wineID); 
+        WineUser wine = users.get(seller).getWine(wineID);
         if (wine == null) // Seller does not have wine
             return SELLER_DOES_NOT_HAVE_WINE;
 
@@ -97,19 +97,18 @@ public class StateHandler {
         return SUCCESS;
     }
 
-    public float getBalance(String user){
+    public float getBalance(String user) {
         if (!users.containsKey(user))
             return USER_DOES_NOT_EXIST;
         return users.get(user).getBalance();
     }
 
-
     public void syncUsersJson() {
-        //TODO
+        // TODO
     }
 
     public void syncWinesJson() {
-        //TODO
+        // TODO
     }
 
     public void syncJson() {
@@ -118,11 +117,11 @@ public class StateHandler {
     }
 
     public void loadUsersJson() {
-        //TODO
+        // TODO
     }
 
     public void loadWinesJson() {
-        //TODO
+        // TODO
     }
 
     public void loadJson() {

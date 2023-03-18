@@ -3,7 +3,7 @@ package objects;
 import java.util.LinkedList;
 
 public class User {
-    //USERS:
+    // USERS:
     // name, wines (id of wines, price, quantity), inbox (for messages)
 
     private String name;
@@ -21,7 +21,7 @@ public class User {
     }
 
     public void removeWine(int wineId) {
-        for (WineUser wine : this.wines) 
+        for (WineUser wine : this.wines)
             if (wine.getId() == wineId) {
                 this.wines.remove(wine);
                 break;
@@ -29,8 +29,8 @@ public class User {
     }
 
     public WineUser getWine(int wineId) {
-        for (WineUser wine : this.wines) 
-            if (wine.getId() == wineId) 
+        for (WineUser wine : this.wines)
+            if (wine.getId() == wineId)
                 return wine;
         return null;
     }
@@ -47,11 +47,11 @@ public class User {
         this.name = name;
     }
 
-   public void setBalance(float balance) {
-    if (balance < 0)
-        throw new IllegalArgumentException("Balance cannot be negative");
-    this.balance = balance;
-}
+    public void setBalance(float balance) {
+        if (balance < 0)
+            throw new IllegalArgumentException("Balance cannot be negative");
+        this.balance = balance;
+    }
 
     @Override
     public String toString() {
