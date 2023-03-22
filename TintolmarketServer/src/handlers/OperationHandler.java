@@ -19,7 +19,7 @@ public class OperationHandler {
 
     // public OperationHandler getIns
 
-    public void receiveAndProcessops() throws IOException, ClassNotFoundException {
+    public void receiveAndProcessOps() throws IOException, ClassNotFoundException {
 
         String opFromClient = (String) in.readObject();
 
@@ -30,7 +30,9 @@ public class OperationHandler {
             switch (opType) {
                 case "add":
                 case "a":
-
+                    String wineName = op[1].split(" ")[0];
+                    String wineImage = op[1].split(" ")[1];
+                    stateHandler.registerWine(wineName, wineImage);
             }
             opFromClient = (String) in.readObject();
             op = opFromClient.split(":");
