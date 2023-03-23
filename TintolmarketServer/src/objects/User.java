@@ -20,18 +20,18 @@ public class User {
         this.wines.add(wine);
     }
 
-    public void removeWine(int wineId) {
-        for (WineUser wine : this.wines)
-            if (wine.getId() == wineId) {
-                this.wines.remove(wine);
-                break;
+    public void removeWine(String wine) {
+        for (WineUser wineO : this.wines)
+            if (wineO.getName().equals(wine)) {
+                this.wines.remove(wineO);
+                return;
             }
     }
 
-    public WineUser getWine(int wineId) {
-        for (WineUser wine : this.wines)
-            if (wine.getId() == wineId)
-                return wine;
+    public WineUser getWine(String wine) {
+        for (WineUser wineO : this.wines)
+            if (wineO.getName().equals(wine))
+                return wineO;
         return null;
     }
 

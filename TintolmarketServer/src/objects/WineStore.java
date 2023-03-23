@@ -6,15 +6,15 @@ public class WineStore extends Wine {
     private float evaluation;
     private int nrOfEvaluations;
 
-    public WineStore(int id, String name, String image, float evaluation, int nrOfEvaluations) {
-        super(id, name);
+    public WineStore(String name, String image, float evaluation, int nrOfEvaluations) {
+        super(name);
         this.image = image;
         this.evaluation = evaluation;
         this.nrOfEvaluations = nrOfEvaluations;
     }
 
-    public WineStore(int id, String name, String image) {
-        super(id, name);
+    public WineStore(String name, String image) {
+        super(name);
         this.image = image;
         this.evaluation = 0;
         this.nrOfEvaluations = 0;
@@ -51,6 +51,6 @@ public class WineStore extends Wine {
 
     @Override
     public String toString() {
-        return "Wine [evaluation=" + evaluation + ", id=" + getId() + ", image=" + image + ", name=" + getName() + "]";
+        return "Wine [evaluation=" + evaluation + ", image=" + image + ", name=" + getName() + "]";
     }
 }

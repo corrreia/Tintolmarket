@@ -93,7 +93,8 @@ public class Tintolmarket {
         }
 
         OperationMenu menu = new OperationMenu(outStream, inStream, clientID, password);
-        menu.showMenu();
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        menu.receiveOperation(stdIn);
 
         outStream.close();
         inStream.close();
