@@ -27,6 +27,9 @@ public class OperationMenu {
 
     private void add(String wine, String image) throws IOException {
         operation = "add: " + wine + " " + image;
+        outStream.writeObject(operation);
+        outStream.flush();
+        
         int serverResponse = inStream.readInt();
         if (serverResponse == 0) {
             System.out.println(wine + " added successfully.");

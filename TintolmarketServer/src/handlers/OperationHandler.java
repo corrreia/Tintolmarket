@@ -8,18 +8,21 @@ public class OperationHandler {
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private String user;
 
     StateHandler stateHandler;
 
-    public OperationHandler(ObjectInputStream in, ObjectOutputStream out) {
+    public OperationHandler(String user, ObjectInputStream in, ObjectOutputStream out) {
         this.in = in;
         this.out = out;
+        this.user = user;
+
         stateHandler = StateHandler.getInstance();
     }
 
     // public OperationHandler getIns
 
-    public void receiveAndProcessops() throws IOException, ClassNotFoundException {
+    public void receiveAndProcessOps() throws IOException, ClassNotFoundException {
 
         String opFromClient = (String) in.readObject();
 
@@ -30,7 +33,21 @@ public class OperationHandler {
             switch (opType) {
                 case "add":
                 case "a":
-
+                    String wineName = op[1].split(" ")[0];
+                    String wineImage = op[1].split(" ")[1];
+                    stateHandler.registerWine(wineName, wineImage);
+                    out.writeInt(0);
+                    out.flush();
+                    break;
+                case "sell":
+                case "s":
+                    int wineId = Integer.parseInt(op[1].split(" ")[1]);
+                    int quantity = Integer.parseInt(op[1].split(" ")[2]);
+                    float price = Float.parseFloat(op[1].split(" ")[3]);
+                    int returnCode = stateHandler.addWineListingToUser(user, wineId, quantity, price);
+                    out.writeInt(returnCode);
+                    out.flush();
+                    break;
             }
             opFromClient = (String) in.readObject();
             op = opFromClient.split(":");
