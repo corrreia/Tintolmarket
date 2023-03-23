@@ -19,6 +19,8 @@ public class StateHandler {
     public static final int SELLER_DOES_NOT_HAVE_WINE = -4;
     public static final int SELLER_DOES_NOT_HAVE_ENOUGH_WINE = -5;
     public static final int BUYER_DOES_NOT_HAVE_ENOUGH_MONEY = -6;
+    public static final int WINE_ALREADY_EXISTS = -7;
+    public static final int USER_ALREADY_EXISTS = -8;
 
     private static StateHandler instance = null;
 
@@ -39,15 +41,22 @@ public class StateHandler {
         return instance;
     }
 
-    public void registerUser(String name) {
+    public int registerUser(String name) {
+        if (users.containsKey(name)) // User already exists
+            return USER_ALREADY_EXISTS;
+
         User user = new User(name, STARTING_BALANCE);
         this.users.put(name, user);
+        return 0; // Success
     }
 
-    public void registerWine(String name, String image) {
+    public int registerWine(String name, String image) {
+        if (wines.containsKey(nextWineId)) // Wine already exists
+            return WINE_ALREADY_EXISTS;
         WineStore wine = new WineStore(nextWineId, name, image);
         this.wines.put(nextWineId, wine);
         nextWineId++;
+        return 0; // Success
     }
 
     public int addWineListingToUser(String user, int wineId, int quantity, float price) {
