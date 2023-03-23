@@ -27,14 +27,13 @@ public class OperationHandler {
 
         String opFromClient = (String) in.readObject();
 
-        System.out.println("Received operation: " + opFromClient);
-
         String[] op = opFromClient.split(":");
         String opType = op[0];
 
         op[1] = op[1].trim(); // Remove leading and trailing spaces
 
         while (!opType.equals("exit")) {
+            System.out.println("Received operation: " + opFromClient);
             switch (opType) {
                 case "add":
                 case "a":
@@ -42,7 +41,7 @@ public class OperationHandler {
                     String wineName = op[1].split(" ")[0];
                     String wineImage = op[1].split(" ")[1];
 
-                    out.writeInt(stateHandler.registerWine(wineName, wineImage));
+                    out.writeInt(stateHandler.addWine(wineName, wineImage));
                     out.flush();
                     break;
                 case "sell":
@@ -51,7 +50,13 @@ public class OperationHandler {
                     String wine = op[1].split(" ")[1];
                     int quantity = Integer.parseInt(op[1].split(" ")[2]);
                     float price = Float.parseFloat(op[1].split(" ")[3]);
+
+                    System.out.println("Wine: " + wine + " Quantity: " + quantity + " Price: " + price);
+
                     int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
+
+                    System.out.println("Return code: " + returnCode);
+
                     out.writeInt(returnCode);
                     out.flush();
                     break;

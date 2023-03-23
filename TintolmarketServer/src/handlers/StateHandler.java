@@ -41,16 +41,17 @@ public class StateHandler {
         return instance;
     }
 
-    public int registerUser(String name) {
+    public int addUser(String name) {
         if (users.containsKey(name)) // User already exists
             return USER_ALREADY_EXISTS;
 
         User user = new User(name, STARTING_BALANCE);
         this.users.put(name, user);
+
         return 0; // Success
     }
 
-    public int registerWine(String name, String image) {
+    public int addWine(String name, String image) {
         if (wines.containsKey(name)) // Wine already exists
             return WINE_ALREADY_EXISTS;
         WineStore wine = new WineStore(name, image);
