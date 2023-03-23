@@ -105,7 +105,7 @@ public class OperationMenu {
             System.out.println("Your wallet has " + wallet + " euros.");
         } else {
             System.out.println("Error while reading wallet.");
-        }
+        }     
     }
 
     private void classify(String wine, String stars) throws IOException {
