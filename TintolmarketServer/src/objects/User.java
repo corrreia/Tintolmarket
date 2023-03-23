@@ -1,6 +1,7 @@
 package objects;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class User implements Serializable {
@@ -10,6 +11,7 @@ public class User implements Serializable {
     private String name;
     private float balance;
     private LinkedList<WineUser> wines;
+    private HashMap<String, String> inbox;
 
     public User(String name, float balance) {
         this.name = name;
@@ -56,6 +58,16 @@ public class User implements Serializable {
 
     public LinkedList<WineUser> getWines() {
         return wines;
+    }
+
+    public void addMessage(String sender, String message) {
+        this.inbox.put(sender, message);
+    }
+
+    public HashMap<String, String> readInbox() {
+        HashMap<String, String> inbox = this.inbox;
+        this.inbox = new HashMap<String, String>();
+        return inbox;
     }
 
     @Override

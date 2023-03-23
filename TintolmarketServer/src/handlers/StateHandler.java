@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import objects.User;
@@ -91,7 +92,7 @@ public class StateHandler {
 
         result.append("-------------------------\n");
         result.append("Name : " + wineO.getName() + "\n");
-        result.append("Image located in " + wineO.getImage() + "\n");
+        result.append("Image path: " + wineO.getImage() + "\n");
         result.append("Average rating : " + wineO.getEvaluation() + " (" + wineO.getNrOfEvaluations() + ")\n");
         result.append("Listings : \n");
 
@@ -99,7 +100,8 @@ public class StateHandler {
             for (WineUser wineO2 : v.getWines())
                 if (wineO2.getName().equals(wine))
                     result.append(
-                            "\t" + v.getName() + " : " + wineO2.getQuantity() + " bottles at " + wineO2.getPrice());
+                            "\t" + v.getName() + " : " + wineO2.getQuantity() + " bottles at " + wineO2.getPrice()
+                                    + "\n");
         });
 
         result.append("-------------------------\n");
@@ -155,9 +157,11 @@ public class StateHandler {
             return WINE_DOES_NOT_EXIST;
 
         WineStore wineO = wines.get(wine);
-        wineO.newEvaluation(Integer.parseInt(stars));
+        wineO.newEvaluation(Float.parseFloat(stars));
 
+        System.out.println("tens truwe");
         syncWines();
+        System.out.println("che dred");
         return SUCCESS;
     }
 
@@ -166,17 +170,22 @@ public class StateHandler {
             return USER_DOES_NOT_EXIST;
 
         User userO = users.get(to);
-        // TODO
-
+        userO.addMessage(from, message);
         syncUsers();
         return SUCCESS;
     }
 
-    public List<String> read() {
-        // TODO
+    public List<String> read(String user) {
+        if (!users.containsKey(user)) // User does not exist
+            return null;
 
+        List<String> result = new LinkedList<>();
+
+        users.get(user).readInbox().forEach((k, v) -> {
+            result.add(k + " : " + v);
+        });
         syncUsers(); // because of when the user reads the messages, they are deleted
-        return null;
+        return result;
     }
 
     public void syncUsers() {

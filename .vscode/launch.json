@@ -12,7 +12,15 @@
 		// },
 		{
 			"type": "java",
-			"name": "Tintolmarket",
+			"name": "Tintolmarket sopa",
+			"request": "launch",
+			"mainClass": "main.Tintolmarket",
+			"projectName": "Tintolmarket_78ab6b11",
+			"args": "localhost:12345 sopa user"
+		},
+		{
+			"type": "java",
+			"name": "Tintolmarket user",
 			"request": "launch",
 			"mainClass": "main.Tintolmarket",
 			"projectName": "Tintolmarket_78ab6b11",

@@ -26,10 +26,10 @@ public class OperationMenu {
     }
 
     private void add(String wine, String image) throws IOException {
-        operation = "add: " + wine + " " + image;
+        operation = "add " + wine + " " + image;
         outStream.writeObject(operation);
         outStream.flush();
-        
+
         int serverResponse = inStream.readInt();
         if (serverResponse == 0) {
             System.out.println(wine + " added successfully.");
@@ -43,7 +43,7 @@ public class OperationMenu {
         if (Integer.parseInt(quantity) <= 0 || Integer.parseInt(value) <= 0) {
             System.out.println("Problem with wine value or quantity. Please try again.");
         } else {
-            operation = "sell: " + wine + " " + value + " " + quantity;
+            operation = "sell " + wine + " " + value + " " + quantity;
             outStream.writeObject(operation);
             outStream.flush();
 
@@ -59,7 +59,7 @@ public class OperationMenu {
     }
 
     private void view(String wine) throws IOException, ClassNotFoundException {
-        operation = "view: " + wine;
+        operation = "view " + wine;
 
         outStream.writeObject(operation);
         outStream.flush();
@@ -81,7 +81,7 @@ public class OperationMenu {
             if (Integer.parseInt(quantity) <= 0) {
                 System.out.println("Problem with wine quantity. Please try again.");
             } else {
-                operation = "buy: " + wine + " " + seller + " " + quantity;
+                operation = "buy " + wine + " " + seller + " " + quantity;
                 outStream.writeObject(operation);
                 outStream.flush();
 
@@ -105,7 +105,7 @@ public class OperationMenu {
             System.out.println("Your wallet has " + wallet + " euros.");
         } else {
             System.out.println("Error while reading wallet.");
-        }     
+        }
     }
 
     private void classify(String wine, String stars) throws IOException {
@@ -114,12 +114,12 @@ public class OperationMenu {
         if (starsFloat < 1 || starsFloat > 5) {
             System.out.println("Stars must be between 1 and 5. Please try again.");
         } else {
-            operation = "classify: " + wine + " " + stars;
+            operation = "classify " + wine + " " + stars;
             outStream.writeObject(operation);
             outStream.flush();
 
             int serverResponse = inStream.readInt();
-            if (serverResponse == 0){
+            if (serverResponse == 0) {
                 System.out.println(wine + " classified successfully.");
             } else {
                 System.out.println(wine + " does not exist. Please try again.");
@@ -127,13 +127,13 @@ public class OperationMenu {
         }
     }
 
-    private void talk(String user, String message) throws IOException{
-        operation = "talk: " + user + " " + message;
+    private void talk(String user, String message) throws IOException {
+        operation = "talk " + user + " " + message;
         outStream.writeObject(operation);
         outStream.flush();
 
         int serverResponse = inStream.readInt();
-        if(serverResponse == 0){
+        if (serverResponse == 0) {
             System.out.println("Message sent successfully.");
         } else {
             System.out.println("User " + user + " does not exist. Please try again.");
@@ -144,21 +144,21 @@ public class OperationMenu {
         operation = "read";
         outStream.writeObject(operation);
         outStream.flush();
-        
+
         int serverResponse = inStream.readInt();
-        if (serverResponse == 0){
+        if (serverResponse == 0) {
             @SuppressWarnings("unchecked")
             List<String> messages = (List<String>) inStream.readObject();
 
-			System.out.println("\n--------------------- Inbox --------------------\n"); 
-            if(messages.isEmpty()){
+            System.out.println("\n--------------------- Inbox --------------------\n");
+            if (messages.isEmpty()) {
                 System.out.println("No messages.");
             } else {
-                for(String msg : messages){
+                for (String msg : messages) {
                     System.out.println(msg);
                 }
             }
-            System.out.println("\n------------------------------------------------\n"); 
+            System.out.println("\n------------------------------------------------\n");
         }
     }
 
@@ -190,7 +190,7 @@ public class OperationMenu {
         System.out.print("Enter an operation: ");
         String op = in.readLine();
 
-        String[] opSplit = op.split(" ");
+        String[] opSplit = op.trim().split(" ");
         String command = opSplit[0];
 
         while (!command.equals("quit")) {
@@ -297,10 +297,10 @@ public class OperationMenu {
             System.out.print("Enter an operation: ");
             op = in.readLine();
 
-            opSplit = op.split(" ");
+            opSplit = op.trim().split(" ");
             command = opSplit[0];
         }
-        
+
         System.out.println("Bye!");
         outStream.writeObject(command);
         outStream.flush();
