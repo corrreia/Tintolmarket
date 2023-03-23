@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import handlers.StateHandler;
 import handlers.UserHandler;
 import exceptions.TooManyArgumentsServerException;
 
@@ -42,23 +41,22 @@ public class TintolmarketServer {
 
 		try {
 			sSoc = new ServerSocket(port);
+			while (true) {
+				try {
+					System.out.println("Waiting for connections...");
+					Socket inSoc = sSoc.accept();
+					System.out.println("Connection established with " + inSoc.getInetAddress().getHostAddress());
+					ServerThread newServerThread = new ServerThread(inSoc);
+					newServerThread.start();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
 
-		while (true) {
-			try {
-				System.out.println("Waiting for connections...");
-				Socket inSoc = sSoc.accept();
-				System.out.println("Connection established with " + inSoc.getInetAddress().getHostAddress());
-				ServerThread newServerThread = new ServerThread(inSoc);
-				newServerThread.start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		// sSoc.close();
 	}
 
 	// Threads utilizadas para comunicacao com os clientes
