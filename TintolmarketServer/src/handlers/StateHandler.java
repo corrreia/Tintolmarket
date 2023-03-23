@@ -71,24 +71,27 @@ public class StateHandler {
     }
 
     public String[] wineView(String wine) {
-        // // gets the information of the wine named wine, including the image
-        // // if there are unites for sale, the name of the seller and the price and the quantity
+        if (!wines.containsKey(wine)) // Wine does not exist
+            return null;
 
-        // if (!wines.containsKey(wine)) // Wine does not exist
-        //     return null;
-        
-        // WineStore wineO = wines.get(wine);
-        // String[] ret = new String[wineO.getWineListings().size() + 1];
-        // ret[0] = wineO.getImage();
-        // int i = 1;
-        // for (WineUser wineU : wineO.getWineListings()) {
-        //     ret[i] = wineU.getSeller() + " " + wineU.getPrice() + " " + wineU.getQuantity();
-        //     i++;
-        // }
-        // return ret;
+        WineStore wineO = wines.get(wine);
 
-        //TODO
-        return null;
+        String[] result = new String[2];
+
+        result[0] = Float.toString(wineO.getEvaluation());
+        result[1] = wineO.getImage();
+
+        // AtomicInteger count = new AtomicInteger(0);
+
+        // users.forEach((k, v) -> {
+        //     WineUser wineU = v.getWine(wine);
+        //     if (wineU != null)
+        //         count.incrementAndGet();
+        // });
+
+        // result[2] = Integer.toString(count.get());
+
+        return result;
     }
 
     public int buySellWine(String seller, String buyer, String wine, int quantity) {

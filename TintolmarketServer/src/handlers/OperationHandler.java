@@ -33,14 +33,15 @@ public class OperationHandler {
             switch (opType) {
                 case "add":
                 case "a":
+                    System.out.println("Adding wine");
                     String wineName = op[1].split(" ")[0];
                     String wineImage = op[1].split(" ")[1];
-                    stateHandler.registerWine(wineName, wineImage);
-                    out.writeInt(0);
+                    out.writeInt(stateHandler.registerWine(wineName, wineImage));
                     out.flush();
                     break;
                 case "sell":
                 case "s":
+                    System.out.println("Selling wine");
                     String wine = op[1].split(" ")[1];
                     int quantity = Integer.parseInt(op[1].split(" ")[2]);
                     float price = Float.parseFloat(op[1].split(" ")[3]);
@@ -50,6 +51,7 @@ public class OperationHandler {
                     break;
                 case "view":
                 case "v":
+                    System.out.println("Viewing wine");
                     String wineToView = op[1];
                     String[] wineView = stateHandler.wineView(wineToView);
                     if (wineView == null) {
