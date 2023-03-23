@@ -118,6 +118,8 @@ public class StateHandler {
         if (wineO.getQuantity() == 0)
             sellerO.removeWine(wine);
 
+        System.out.println(quantity + " bottles of " + wine + "bought/sold successfully");
+
         return SUCCESS;
     }
 

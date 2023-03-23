@@ -70,6 +70,23 @@ public class OperationHandler {
                         out.flush();
                     }
                     break;
+                case "buy":
+                case "b":
+                    System.out.println("Buying wine"); // buy: <wine> <seller> <quantity>
+                    String wineToBuy = op[1].split(" ")[0];
+                    String seller = op[1].split(" ")[1];
+                    int quantityToBuy = Integer.parseInt(op[1].split(" ")[2]);
+                    int wineBuy = stateHandler.buySellWine(seller, user, wineToBuy, quantityToBuy);
+                    out.writeInt(wineBuy);
+                    out.flush();
+                    break;
+                case "wallet":
+                case "w":
+                    System.out.println("Viewing wallet");
+                    Float wallet = stateHandler.getBalance(user);
+                    out.writeObject(wallet);
+                    out.flush();
+                    break;
             }
             opFromClient = (String) in.readObject();
             op = opFromClient.split(":");
