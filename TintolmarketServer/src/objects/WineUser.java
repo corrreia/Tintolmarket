@@ -5,8 +5,8 @@ public class WineUser extends Wine {
     private float price = 0;
     private int quantity = 0;
 
-    public WineUser(int id, String name, float price, int quantity) {
-        super(id, name);
+    public WineUser(String name, float price, int quantity) {
+        super(name);
         if (price > 0)
             this.price = price;
         if (quantity > 0)
@@ -48,6 +48,6 @@ public class WineUser extends Wine {
 
     @Override
     public String toString() {
-        return "Wine [price=" + price + ", quantity=" + quantity + ", id=" + getId() + ", name=" + getName() + "]";
+        return "Wine [price=" + price + ", quantity=" + quantity + ", name=" + getName() + "]";
     }
 }

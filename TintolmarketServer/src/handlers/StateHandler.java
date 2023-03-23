@@ -1,6 +1,7 @@
 package handlers;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import objects.User;
 import objects.WineStore;
@@ -26,13 +27,12 @@ public class StateHandler {
 
     // --- these need to be saved to a json file
     private HashMap<String, User> users;
-    private HashMap<Integer, WineStore> wines;
-    private static int nextWineId = 0;
+    private HashMap<String, WineStore> wines;
     // ---
 
     private StateHandler() {
         this.users = new HashMap<String, User>();
-        this.wines = new HashMap<Integer, WineStore>();
+        this.wines = new HashMap<String, WineStore>();
     }
 
     public static StateHandler getInstance() { // Singleton
@@ -51,35 +51,51 @@ public class StateHandler {
     }
 
     public int registerWine(String name, String image) {
-        if (wines.containsKey(nextWineId)) // Wine already exists
+        if (wines.containsKey(name)) // Wine already exists
             return WINE_ALREADY_EXISTS;
-        WineStore wine = new WineStore(nextWineId, name, image);
-        this.wines.put(nextWineId, wine);
-        nextWineId++;
+        WineStore wine = new WineStore(name, image);
+        this.wines.put(name, wine);
         return 0; // Success
     }
 
-    public int addWineListingToUser(String user, int wineId, int quantity, float price) {
-        if (!wines.containsKey(wineId)) // Wine does not exist
+    public int addWineListingToUser(String user, String wine, int quantity, float price) {
+        if (!wines.containsKey(wine)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
 
         if (!users.containsKey(user)) // User does not exist
             return USER_DOES_NOT_EXIST;
 
-        WineStore wine = wines.get(wineId);
-        users.get(user).addWineListing(new WineUser(wineId, wine.getName(), price, quantity));
+        users.get(user).addWineListing(new WineUser(wine, price, quantity));
 
         return 0; // Success
     }
 
-    public String[] wineView(String wine){
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
+    public String[] wineView(String wine) {
+        if (!wines.containsKey(wine)) // Wine does not exist
+            return null;
 
-    public int buySellWine(String seller, String buyer, int wineID, int quantity) {
-        if (!wines.containsKey(wineID)) // Wine does not exist
+        WineStore wineO = wines.get(wine);
+
+        String[] result = new String[3];
+
+        result[0] = wineO.getName();
+        result[1] = wineO.getImage();
+
+        AtomicInteger count = new AtomicInteger(0);
+
+        users.forEach((k, v) -> {
+            WineUser wineU = v.getWine(wine);
+            if (wineU != null)
+                count.incrementAndGet();
+        });
+
+        result[2] = Integer.toString(count.get());
+
+        return result;
+    }
+
+    public int buySellWine(String seller, String buyer, String wine, int quantity) {
+        if (!wines.containsKey(wine)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
 
         if (!users.containsKey(seller)) // Seller does not exist
@@ -88,26 +104,26 @@ public class StateHandler {
         if (!users.containsKey(buyer)) // Buyer does not exist
             return USER_DOES_NOT_EXIST;
 
-        WineUser wine = users.get(seller).getWine(wineID);
-        if (wine == null) // Seller does not have wine
+        WineUser wineO = users.get(seller).getWine(wine);
+        if (wineO == null) // Seller does not have wine
             return SELLER_DOES_NOT_HAVE_WINE;
 
-        if (wine.getQuantity() < quantity) // Seller does not have enough wine
+        if (wineO.getQuantity() < quantity) // Seller does not have enough wine
             return SELLER_DOES_NOT_HAVE_ENOUGH_WINE;
 
         User sellerO = users.get(seller);
         User buyerO = users.get(buyer);
 
-        float price = wine.getPrice() * quantity;
+        float price = wineO.getPrice() * quantity;
         if (buyerO.getBalance() < price) // Buyer does not have enough money
             return BUYER_DOES_NOT_HAVE_ENOUGH_MONEY;
 
         sellerO.setBalance(sellerO.getBalance() + price);
         buyerO.setBalance(buyerO.getBalance() - price);
 
-        wine.setQuantity(wine.getQuantity() - quantity);
-        if (wine.getQuantity() == 0)
-            sellerO.removeWine(wineID);
+        wineO.setQuantity(wineO.getQuantity() - quantity);
+        if (wineO.getQuantity() == 0)
+            sellerO.removeWine(wine);
 
         return SUCCESS;
     }

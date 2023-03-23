@@ -41,10 +41,10 @@ public class OperationHandler {
                     break;
                 case "sell":
                 case "s":
-                    int wineId = Integer.parseInt(op[1].split(" ")[1]);
+                    String wine = op[1].split(" ")[1];
                     int quantity = Integer.parseInt(op[1].split(" ")[2]);
                     float price = Float.parseFloat(op[1].split(" ")[3]);
-                    int returnCode = stateHandler.addWineListingToUser(user, wineId, quantity, price);
+                    int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
                     out.writeInt(returnCode);
                     out.flush();
                     break;
