@@ -55,6 +55,9 @@ public class StateHandler {
             return WINE_ALREADY_EXISTS;
         WineStore wine = new WineStore(name, image);
         this.wines.put(name, wine);
+
+        System.out.println(wines.toString());
+
         return 0; // Success
     }
 

@@ -32,6 +32,8 @@ public class OperationHandler {
         String[] op = opFromClient.split(":");
         String opType = op[0];
 
+        op[1] = op[1].trim(); // Remove leading and trailing spaces
+
         while (!opType.equals("exit")) {
             switch (opType) {
                 case "add":
@@ -39,6 +41,7 @@ public class OperationHandler {
                     System.out.println("Adding wine");
                     String wineName = op[1].split(" ")[0];
                     String wineImage = op[1].split(" ")[1];
+
                     out.writeInt(stateHandler.registerWine(wineName, wineImage));
                     out.flush();
                     break;
