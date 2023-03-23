@@ -6,23 +6,30 @@ import java.io.ObjectOutputStream;
 
 public class OperationHandler {
 
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
-    private String user;
+    // private ObjectOutputStream out;
+    // private ObjectInputStream in;
+    // private String user;
+    private static OperationHandler instance;
 
-    StateHandler stateHandler;
+    private static StateHandler stateHandler;
 
-    public OperationHandler(String user, ObjectInputStream in, ObjectOutputStream out) {
-        this.in = in;
-        this.out = out;
-        this.user = user;
-
-        stateHandler = StateHandler.getInstance();
+    public OperationHandler() {
+        // this.in = in;
+        // this.out = out;
+        // this.user = user;
     }
 
-    // public OperationHandler getIns
+    public static OperationHandler getInstace() {
+        stateHandler = StateHandler.getInstance();
 
-    public void receiveAndProcessOps() throws IOException, ClassNotFoundException {
+        if (instance == null) {
+            instance = new OperationHandler();
+        }
+        return instance;
+    }
+
+    public void receiveAndProcessOps(String user, ObjectOutputStream out, ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
 
         String opFromClient = (String) in.readObject();
 

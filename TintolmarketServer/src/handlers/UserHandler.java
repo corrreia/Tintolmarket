@@ -12,7 +12,7 @@ public class UserHandler {
 
     private ObjectOutputStream outStream = null;
     private ObjectInputStream inStream = null;
-    private static String username = null;
+    private String username = null;
 
     private static final String FILE_NAME = "credentials.txt";
     private static File userFile;
@@ -98,8 +98,16 @@ public class UserHandler {
         }
     }
 
-    // public void handleOps() throws IOException {
-    //     // TODO: implement this to work with the operation handler
-    //     // by now username, inStream and outStream are available and fully functional
-    // }
+    public void handleOps() throws IOException {
+        // TODO: implement this to work with the operation handler
+        // by now username, inStream and outStream are available and fully functional
+
+        OperationHandler opH = OperationHandler.getInstace();
+        try {
+            opH.receiveAndProcessOps(username, outStream, inStream);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

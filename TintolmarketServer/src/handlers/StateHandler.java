@@ -81,15 +81,15 @@ public class StateHandler {
         result[0] = Float.toString(wineO.getEvaluation());
         result[1] = wineO.getImage();
 
-        // AtomicInteger count = new AtomicInteger(0);
+        AtomicInteger count = new AtomicInteger(0);
 
-        // users.forEach((k, v) -> {
-        //     WineUser wineU = v.getWine(wine);
-        //     if (wineU != null)
-        //         count.incrementAndGet();
-        // });
+        users.forEach((k, v) -> {
+            WineUser wineU = v.getWine(wine);
+            if (wineU != null)
+                count.incrementAndGet();
+        });
 
-        // result[2] = Integer.toString(count.get());
+        result[2] = Integer.toString(count.get());
 
         return result;
     }
