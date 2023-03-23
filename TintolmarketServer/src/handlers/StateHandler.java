@@ -6,10 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import objects.User;
 import objects.WineStore;
@@ -85,13 +83,28 @@ public class StateHandler {
         System.out.println(wines.toString());
 
         if (!wines.containsKey(wine.trim())) // Wine does not exist
-            return "nao contem";
+            return "Wine does not exist";
 
-        WineStore wineO = wines.get(wine);
+        WineStore wineO = wines.get(wine.trim()); // trim just in case
 
         StringBuilder result = new StringBuilder();
 
-        result.append(wineO.getName() + " " + wineO.getImage());
+        result.append("-------------------------\n");
+        result.append("Name : " + wineO.getName() + "\n");
+        result.append("Image located in " + wineO.getImage() + "\n");
+        result.append("Average rating : " + wineO.getEvaluation() + "(" + wineO.getNrOfEvaluations() + ")\n");
+        result.append("Listings : \n");
+
+        users.forEach((k, v) -> {
+            for (WineUser wineO2 : v.getWines()) {
+                if (wineO2.getName().equals(wine)) {
+                    result.append(
+                            "\t" + v.getName() + " : " + wineO2.getQuantity() + " bottles at " + wineO2.getPrice());
+                }
+            }
+        });
+
+        result.append("-------------------------\n");
 
         return result.toString();
     }
