@@ -18,12 +18,15 @@ public class UserHandler {
     private static File userFile;
 
     private UserHandler(String username, ObjectInputStream inStream, ObjectOutputStream outStream) throws IOException {
-        this.userFile = new File(FILE_NAME);
 
         this.outStream = outStream;
         this.inStream = inStream;
         this.username = username;
 
+    }
+
+    private static void checkFile() throws IOException {
+        userFile = new File(FILE_NAME);
         if (!userFile.exists()) {
             if (!userFile.createNewFile()) {
                 throw new IOException("Could not create file " + userFile.getAbsolutePath());
@@ -73,6 +76,8 @@ public class UserHandler {
 
     public static UserHandler authenticate(String username, String password, ObjectInputStream inStream,
             ObjectOutputStream outStream) throws IOException {
+
+        checkFile();
 
         if (isRegistered(username)) {
             outStream.writeInt(1);
