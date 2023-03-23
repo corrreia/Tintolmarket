@@ -100,7 +100,8 @@ public class StateHandler {
             for (WineUser wineO2 : v.getWines())
                 if (wineO2.getName().equals(wine))
                     result.append(
-                            "\t" + v.getName() + " : " + wineO2.getQuantity() + " bottles at " + wineO2.getPrice() + "\n");
+                            "\t" + v.getName() + " : " + wineO2.getQuantity() + " bottles at " + wineO2.getPrice()
+                                    + "\n");
         });
 
         result.append("-------------------------\n");
@@ -156,9 +157,11 @@ public class StateHandler {
             return WINE_DOES_NOT_EXIST;
 
         WineStore wineO = wines.get(wine);
-        wineO.newEvaluation(Integer.parseInt(stars));
+        wineO.newEvaluation(Float.parseFloat(stars));
 
+        System.out.println("tens truwe");
         syncWines();
+        System.out.println("che dred");
         return SUCCESS;
     }
 
