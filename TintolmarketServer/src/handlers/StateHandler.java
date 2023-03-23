@@ -1,5 +1,12 @@
 package handlers;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,8 +17,8 @@ import objects.WineUser;
 
 public class StateHandler {
     private static final int STARTING_BALANCE = 200;
-    private static final String USERS_JSON = "users.json";
-    private static final String WINES_JSON = "wines.json";
+    private static final String USERS_FILE = "users.ser";
+    private static final String WINES_FILE = "wines.ser";
 
     // return codes
     public static final int SUCCESS = 0;
@@ -34,6 +41,8 @@ public class StateHandler {
     private StateHandler() {
         this.users = new HashMap<String, User>();
         this.wines = new HashMap<String, WineStore>();
+        loadUsers();
+        loadWines();
     }
 
     public static StateHandler getInstance() { // Singleton
@@ -47,6 +56,7 @@ public class StateHandler {
             return USER_ALREADY_EXISTS;
         User user = new User(name, STARTING_BALANCE);
         this.users.put(name, user);
+        syncUsers();
         return 0; // Success
     }
 
@@ -55,6 +65,7 @@ public class StateHandler {
             return WINE_ALREADY_EXISTS;
         WineStore wine = new WineStore(name, image);
         this.wines.put(name, wine);
+        syncWines();
         return 0; // Success
     }
 
@@ -66,7 +77,7 @@ public class StateHandler {
             return USER_DOES_NOT_EXIST;
 
         users.get(user).addWineListing(new WineUser(wine, price, quantity));
-
+        syncUsers();
         return SUCCESS; // Success
     }
 
@@ -118,6 +129,7 @@ public class StateHandler {
 
         System.out.println(quantity + " bottles of " + wine + "bought/sold successfully");
 
+        syncUsers();
         return SUCCESS;
     }
 
@@ -134,6 +146,7 @@ public class StateHandler {
         WineStore wineO = wines.get(wine);
         wineO.newEvaluation(Integer.parseInt(stars));
 
+        syncWines();
         return SUCCESS;
     }
 
@@ -144,37 +157,68 @@ public class StateHandler {
         User userO = users.get(to);
         // TODO
 
+        syncUsers();
         return SUCCESS;
     }
 
     public List<String> read() {
         // TODO
+
+        syncUsers(); // because of when the user reads the messages, they are deleted
         return null;
     }
 
-    public void syncUsersJson() {
-        // TODO
+    public void syncUsers() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(USERS_FILE))) {
+            oos.writeObject(users);
+        } catch (FileNotFoundException e) {
+            System.out.println("Users file not found");
+        } catch (IOException e) {
+            System.out.println("Cant serialize users");
+        }
     }
 
-    public void syncWinesJson() {
-        // TODO
+    public void syncWines() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(WINES_FILE))) {
+            oos.writeObject(wines);
+        } catch (FileNotFoundException e) {
+            System.out.println("Wines file not found");
+        } catch (IOException e) {
+            System.out.println("Cant serialize wines");
+        }
     }
 
-    public void syncJson() {
-        syncUsersJson();
-        syncWinesJson();
+    public void sync() {
+        syncUsers();
+        syncWines();
     }
 
-    public void loadUsersJson() {
-        // TODO
+    public void loadUsers() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(USERS_FILE))) {
+            users = (HashMap<String, User>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Users file not found");
+        } catch (IOException e) {
+            System.out.println("Error reading users file");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found");
+        }
     }
 
-    public void loadWinesJson() {
-        // TODO
+    public void loadWines() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(WINES_FILE))) {
+            wines = (HashMap<String, WineStore>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Wines file not found");
+        } catch (IOException e) {
+            System.out.println("Error reading wines file");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found");
+        }
     }
 
-    public void loadJson() {
-        loadUsersJson();
-        loadWinesJson();
+    public void load() {
+        loadUsers();
+        loadWines();
     }
 }
