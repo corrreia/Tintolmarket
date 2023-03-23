@@ -6,17 +6,11 @@ import java.io.ObjectOutputStream;
 
 public class OperationHandler {
 
-    // private ObjectOutputStream out;
-    // private ObjectInputStream in;
-    // private String user;
     private static OperationHandler instance;
 
     private static StateHandler stateHandler;
 
     public OperationHandler() {
-        // this.in = in;
-        // this.out = out;
-        // this.user = user;
     }
 
     public static OperationHandler getInstace() {
@@ -32,6 +26,8 @@ public class OperationHandler {
             throws IOException, ClassNotFoundException {
 
         String opFromClient = (String) in.readObject();
+
+        System.out.println("Received operation: " + opFromClient);
 
         String[] op = opFromClient.split(":");
         String opType = op[0];
