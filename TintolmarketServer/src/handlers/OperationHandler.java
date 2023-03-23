@@ -28,11 +28,11 @@ public class OperationHandler {
 
         String opFromClient = (String) in.readObject();
 
-        String[] op = opFromClient.split(":");
+        String[] op = opFromClient.split(" ");
         String opType = op[0];
 
-        if (op.length > 1)
-            op[1] = op[1].trim(); // Remove leading and trailing spaces
+        // if (op.length > 1)
+        //     op[1] = op[1].trim(); // Remove leading and trailing spaces
 
         while (!opType.equals("exit")) {
             System.out.println("Received operation: " + opFromClient);
@@ -40,8 +40,8 @@ public class OperationHandler {
                 case "add":
                 case "a":
                     System.out.println("Adding wine");
-                    String wineName = op[1].split(" ")[0];
-                    String wineImage = op[1].split(" ")[1];
+                    String wineName = op[1];
+                    String wineImage = op[2];
 
                     out.writeInt(stateHandler.addWine(wineName, wineImage));
                     out.flush();
@@ -49,9 +49,9 @@ public class OperationHandler {
                 case "sell":
                 case "s":
                     System.out.println("Selling wine");
-                    String wine = op[1].split(" ")[1];
-                    int quantity = Integer.parseInt(op[1].split(" ")[2]);
-                    float price = Float.parseFloat(op[1].split(" ")[3]);
+                    String wine = op[1];
+                    float price = Float.parseFloat(op[2]);
+                    int quantity = Integer.parseInt(op[3]);
                     int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
                     out.writeInt(returnCode);
                     out.flush();
@@ -74,9 +74,10 @@ public class OperationHandler {
                 case "buy":
                 case "b":
                     System.out.println("Buying wine"); // buy: <wine> <seller> <quantity>
-                    String wineToBuy = op[1].split(" ")[0];
-                    String seller = op[1].split(" ")[1];
-                    int quantityToBuy = Integer.parseInt(op[1].split(" ")[2]);
+                    String wineToBuy = op[1];
+                    String seller = op[2];
+                    System.out.println(op[3]);
+                    int quantityToBuy = Integer.parseInt(op[3]);
                     int wineBuy = stateHandler.buySellWine(seller, user, wineToBuy, quantityToBuy);
                     out.writeInt(wineBuy);
                     out.flush();
@@ -92,8 +93,8 @@ public class OperationHandler {
                 case "classify":
                 case "c":
                     System.out.println("Classifying wine");
-                    String wineToClassify = op[1].split(" ")[0];
-                    String classification = op[1].split(" ")[1];
+                    String wineToClassify = op[1];
+                    String classification = op[2];
                     int wineClassify = stateHandler.classify(wineToClassify, classification);
                     out.write(wineClassify);
                     out.flush();
@@ -104,13 +105,13 @@ public class OperationHandler {
                     String userToTalk = op[1];
                     String message = op[2];
                     int userTalk = stateHandler.talk(user, userToTalk, message);
-                    out.write(userTalk);
+                    out.writeInt(userTalk);
                     out.flush();
                     break;
                 case "read":
                 case "r":
                     System.out.println("Reading messages");
-                    List<String> messages = stateHandler.read();
+                    List<String> messages = stateHandler.read(user);
                     out.writeObject(messages);
                     out.flush();
                     break;
@@ -119,7 +120,7 @@ public class OperationHandler {
             op = opFromClient.split(":");
             opType = op[0];
         }
-        
+
         System.out.println("Closing connection with client " + user);
     }
 }

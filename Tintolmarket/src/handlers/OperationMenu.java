@@ -26,7 +26,7 @@ public class OperationMenu {
     }
 
     private void add(String wine, String image) throws IOException {
-        operation = "add: " + wine + " " + image;
+        operation = "add " + wine + " " + image;
         outStream.writeObject(operation);
         outStream.flush();
         
@@ -43,7 +43,7 @@ public class OperationMenu {
         if (Integer.parseInt(quantity) <= 0 || Integer.parseInt(value) <= 0) {
             System.out.println("Problem with wine value or quantity. Please try again.");
         } else {
-            operation = "sell: " + wine + " " + value + " " + quantity;
+            operation = "sell " + wine + " " + value + " " + quantity;
             outStream.writeObject(operation);
             outStream.flush();
 
@@ -59,7 +59,7 @@ public class OperationMenu {
     }
 
     private void view(String wine) throws IOException, ClassNotFoundException {
-        operation = "view: " + wine;
+        operation = "view " + wine;
 
         outStream.writeObject(operation);
         outStream.flush();
@@ -81,7 +81,7 @@ public class OperationMenu {
             if (Integer.parseInt(quantity) <= 0) {
                 System.out.println("Problem with wine quantity. Please try again.");
             } else {
-                operation = "buy: " + wine + " " + seller + " " + quantity;
+                operation = "buy " + wine + " " + seller + " " + quantity;
                 outStream.writeObject(operation);
                 outStream.flush();
 
@@ -114,7 +114,7 @@ public class OperationMenu {
         if (starsFloat < 1 || starsFloat > 5) {
             System.out.println("Stars must be between 1 and 5. Please try again.");
         } else {
-            operation = "classify: " + wine + " " + stars;
+            operation = "classify " + wine + " " + stars;
             outStream.writeObject(operation);
             outStream.flush();
 
@@ -128,7 +128,7 @@ public class OperationMenu {
     }
 
     private void talk(String user, String message) throws IOException{
-        operation = "talk: " + user + " " + message;
+        operation = "talk " + user + " " + message;
         outStream.writeObject(operation);
         outStream.flush();
 
