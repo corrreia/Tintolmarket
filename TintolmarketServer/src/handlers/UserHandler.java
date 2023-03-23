@@ -84,6 +84,7 @@ public class UserHandler {
             if (checkCredentials(username, password)) {
                 outStream.writeObject(true);
                 System.out.println("User " + username + " logged in successfully! :)\n");
+                StateHandler.getInstance().addUser(username);
                 return new UserHandler(username, inStream, outStream);
 
             } else {
