@@ -1,6 +1,7 @@
 package handlers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import objects.User;
@@ -48,7 +49,7 @@ public class StateHandler {
         User user = new User(name, STARTING_BALANCE);
         this.users.put(name, user);
 
-        return 0; // Success
+        return SUCCESS; // Success
     }
 
     public int addWine(String name, String image) {
@@ -59,7 +60,7 @@ public class StateHandler {
 
         System.out.println(wines.toString());
 
-        return 0; // Success
+        return SUCCESS; // Success
     }
 
     public int addWineListingToUser(String user, String wine, int quantity, float price) {
@@ -71,7 +72,7 @@ public class StateHandler {
 
         users.get(user).addWineListing(new WineUser(wine, price, quantity));
 
-        return 0; // Success
+        return SUCCESS; // Success
     }
 
     public String wineView(String wine) {
@@ -127,6 +128,31 @@ public class StateHandler {
         if (!users.containsKey(user))
             return USER_DOES_NOT_EXIST;
         return users.get(user).getBalance();
+    }
+
+    public int classify(String wine, String stars) {
+        if (!wines.containsKey(wine)) // Wine does not exist
+            return WINE_DOES_NOT_EXIST;
+
+        WineStore wineO = wines.get(wine);
+        wineO.newEvaluation(Integer.parseInt(stars));
+
+        return SUCCESS;
+    }
+
+    public int talk(String from, String to, String message) {
+        if (!users.containsKey(to)) // User does not exist
+            return USER_DOES_NOT_EXIST;
+
+        User userO = users.get(to);
+        // TODO
+
+        return SUCCESS;
+    }
+
+    public List<String> read() {
+        // TODO
+        return null;
     }
 
     public void syncUsersJson() {
