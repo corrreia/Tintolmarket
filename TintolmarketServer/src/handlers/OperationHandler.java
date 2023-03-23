@@ -3,6 +3,7 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 public class OperationHandler {
 
@@ -88,11 +89,37 @@ public class OperationHandler {
                     out.writeFloat(wallet);
                     out.flush();
                     break;
+                case "classify":
+                case "c":
+                    System.out.println("Classifying wine");
+                    String wineToClassify = op[1].split(" ")[0];
+                    String classification = op[1].split(" ")[1];
+                    int wineClassify = stateHandler.classify(wineToClassify, classification);
+                    out.write(wineClassify);
+                    out.flush();
+                    break;
+                case "talk":
+                case "t":
+                    System.out.println("Talking to user");
+                    String userToTalk = op[1];
+                    String message = op[2];
+                    int userTalk = stateHandler.talk(user, userToTalk, message);
+                    out.write(userTalk);
+                    out.flush();
+                    break;
+                case "read":
+                case "r":
+                    System.out.println("Reading messages");
+                    List<String> messages = stateHandler.read();
+                    out.writeObject(messages);
+                    out.flush();
+                    break;
             }
             opFromClient = (String) in.readObject();
             op = opFromClient.split(":");
             opType = op[0];
         }
-
+        
+        System.out.println("Closing connection with client " + user);
     }
 }
