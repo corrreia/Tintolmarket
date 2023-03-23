@@ -50,13 +50,7 @@ public class OperationHandler {
                     String wine = op[1].split(" ")[1];
                     int quantity = Integer.parseInt(op[1].split(" ")[2]);
                     float price = Float.parseFloat(op[1].split(" ")[3]);
-
-                    System.out.println("Wine: " + wine + " Quantity: " + quantity + " Price: " + price);
-
                     int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
-
-                    System.out.println("Return code: " + returnCode);
-
                     out.writeInt(returnCode);
                     out.flush();
                     break;
@@ -64,7 +58,9 @@ public class OperationHandler {
                 case "v":
                     System.out.println("Viewing wine");
                     String wineToView = op[1];
-                    String[] wineView = stateHandler.wineView(wineToView);
+                    String wineView = stateHandler.wineView(wineToView);
+
+
                     if (wineView == null) {
                         out.writeInt(-1);
                         out.flush();

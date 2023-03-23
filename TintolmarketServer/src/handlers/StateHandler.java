@@ -74,28 +74,17 @@ public class StateHandler {
         return 0; // Success
     }
 
-    public String[] wineView(String wine) {
+    public String wineView(String wine) {
         if (!wines.containsKey(wine)) // Wine does not exist
-            return null;
+            return "nao contem";
 
         WineStore wineO = wines.get(wine);
 
-        String[] result = new String[2];
+        StringBuilder result = new StringBuilder();
 
-        result[0] = Float.toString(wineO.getEvaluation());
-        result[1] = wineO.getImage();
+        result.append(wineO.getName() + " " + wineO.getImage());
 
-        AtomicInteger count = new AtomicInteger(0);
-
-        users.forEach((k, v) -> {
-            WineUser wineU = v.getWine(wine);
-            if (wineU != null)
-                count.incrementAndGet();
-        });
-
-        result[2] = Integer.toString(count.get());
-
-        return result;
+        return result.toString();
     }
 
     public int buySellWine(String seller, String buyer, String wine, int quantity) {
