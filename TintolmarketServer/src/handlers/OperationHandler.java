@@ -30,7 +30,8 @@ public class OperationHandler {
         String[] op = opFromClient.split(":");
         String opType = op[0];
 
-        op[1] = op[1].trim(); // Remove leading and trailing spaces
+        if (op.length > 1)
+            op[1] = op[1].trim(); // Remove leading and trailing spaces
 
         while (!opType.equals("exit")) {
             System.out.println("Received operation: " + opFromClient);
@@ -60,7 +61,6 @@ public class OperationHandler {
                     String wineToView = op[1];
                     String wineView = stateHandler.wineView(wineToView);
 
-
                     if (wineView == null) {
                         out.writeInt(-1);
                         out.flush();
@@ -84,7 +84,8 @@ public class OperationHandler {
                 case "w":
                     System.out.println("Viewing wallet");
                     Float wallet = stateHandler.getBalance(user);
-                    out.writeObject(wallet);
+                    out.writeInt(0);
+                    out.writeFloat(wallet);
                     out.flush();
                     break;
             }

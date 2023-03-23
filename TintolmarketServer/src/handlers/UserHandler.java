@@ -100,8 +100,6 @@ public class UserHandler {
     }
 
     public void handleOps() throws IOException {
-        // TODO: implement this to work with the operation handler
-        // by now username, inStream and outStream are available and fully functional
 
         OperationHandler opH = OperationHandler.getInstace();
         try {

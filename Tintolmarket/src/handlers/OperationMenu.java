@@ -294,7 +294,7 @@ public class OperationMenu {
                     incorrectOperation();
                     break;
             }
-            System.out.println("Enter an operation: ");
+            System.out.print("Enter an operation: ");
             op = in.readLine();
 
             opSplit = op.split(" ");

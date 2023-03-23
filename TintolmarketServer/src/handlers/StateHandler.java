@@ -44,10 +44,8 @@ public class StateHandler {
     public int addUser(String name) {
         if (users.containsKey(name)) // User already exists
             return USER_ALREADY_EXISTS;
-
         User user = new User(name, STARTING_BALANCE);
         this.users.put(name, user);
-
         return 0; // Success
     }
 
@@ -56,9 +54,6 @@ public class StateHandler {
             return WINE_ALREADY_EXISTS;
         WineStore wine = new WineStore(name, image);
         this.wines.put(name, wine);
-
-        System.out.println(wines.toString());
-
         return 0; // Success
     }
 
@@ -75,7 +70,9 @@ public class StateHandler {
     }
 
     public String wineView(String wine) {
-        if (!wines.containsKey(wine)) // Wine does not exist
+        System.out.println(wines.toString());
+
+        if (!wines.containsKey(wine.trim())) // Wine does not exist
             return "nao contem";
 
         WineStore wineO = wines.get(wine);
