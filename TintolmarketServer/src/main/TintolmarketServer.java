@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import handlers.OperationHandler;
+import handlers.StateHandler;
 import handlers.UserHandler;
 import exceptions.TooManyArgumentsServerException;
 
@@ -92,10 +92,9 @@ public class TintolmarketServer {
 				if (userID != null && passwd != null) {
 					uH = UserHandler.authenticate(userID, passwd, inStream, outStream);
 					if (uH != null) {
-						OperationHandler op = new OperationHandler(userID, inStream, outStream);
-						op.receiveAndProcessOps();
+						uH.handleOps();
 					}
-	
+
 				} else {
 					System.out.println("Error: userID or password is null");
 					outStream.writeObject(false);
@@ -106,7 +105,7 @@ public class TintolmarketServer {
 
 				socket.close();
 
-			} catch (IOException | InterruptedException | ClassNotFoundException e) {
+			} catch (IOException | InterruptedException e) {
 				System.out.println("Connection closed: " + e.getMessage());
 			} finally {
 				try {

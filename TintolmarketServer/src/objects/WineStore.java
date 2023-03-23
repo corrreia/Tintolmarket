@@ -1,20 +1,23 @@
 package objects;
 
-public class WineStore extends Wine {
+import java.io.Serializable;
 
+public class WineStore implements Serializable {
+
+    private String name;
     private String image;
     private float evaluation;
     private int nrOfEvaluations;
 
     public WineStore(String name, String image, float evaluation, int nrOfEvaluations) {
-        super(name);
+        this.name = name;
         this.image = image;
         this.evaluation = evaluation;
         this.nrOfEvaluations = nrOfEvaluations;
     }
 
     public WineStore(String name, String image) {
-        super(name);
+        this.name = name;
         this.image = image;
         this.evaluation = 0;
         this.nrOfEvaluations = 0;
@@ -47,6 +50,14 @@ public class WineStore extends Wine {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

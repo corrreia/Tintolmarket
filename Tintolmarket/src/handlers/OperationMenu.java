@@ -66,11 +66,8 @@ public class OperationMenu {
 
         int serverResponse = inStream.readInt();
         if (serverResponse == 0) {
-            String[] view = (String[]) inStream.readObject();
-            String stars = view[0];
-            String image = view[1];
-
-            System.out.println("Wine: " + wine + " | Stars: " + stars + " | Image: " + image);
+            String view = (String) inStream.readObject();
+            System.out.println(view);
         } else {
             System.out.println("Wine " + wine + " does not exist. Please try again.");
         }
@@ -108,7 +105,7 @@ public class OperationMenu {
             System.out.println("Your wallet has " + wallet + " euros.");
         } else {
             System.out.println("Error while reading wallet.");
-        }
+        }     
     }
 
     private void classify(String wine, String stars) throws IOException {
@@ -297,7 +294,7 @@ public class OperationMenu {
                     incorrectOperation();
                     break;
             }
-            System.out.println("Enter an operation: ");
+            System.out.print("Enter an operation: ");
             op = in.readLine();
 
             opSplit = op.split(" ");
