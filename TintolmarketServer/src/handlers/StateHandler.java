@@ -92,16 +92,14 @@ public class StateHandler {
         result.append("-------------------------\n");
         result.append("Name : " + wineO.getName() + "\n");
         result.append("Image located in " + wineO.getImage() + "\n");
-        result.append("Average rating : " + wineO.getEvaluation() + "(" + wineO.getNrOfEvaluations() + ")\n");
+        result.append("Average rating : " + wineO.getEvaluation() + " (" + wineO.getNrOfEvaluations() + ")\n");
         result.append("Listings : \n");
 
         users.forEach((k, v) -> {
-            for (WineUser wineO2 : v.getWines()) {
-                if (wineO2.getName().equals(wine)) {
+            for (WineUser wineO2 : v.getWines())
+                if (wineO2.getName().equals(wine))
                     result.append(
                             "\t" + v.getName() + " : " + wineO2.getQuantity() + " bottles at " + wineO2.getPrice());
-                }
-            }
         });
 
         result.append("-------------------------\n");
