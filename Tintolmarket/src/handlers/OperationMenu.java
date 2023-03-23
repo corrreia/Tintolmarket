@@ -58,7 +58,7 @@ public class OperationMenu {
         }
     }
 
-    private void view(String wine) throws IOException {
+    private void view(String wine) throws IOException, ClassNotFoundException {
         operation = "view: " + wine;
 
         outStream.writeObject(operation);
@@ -66,9 +66,11 @@ public class OperationMenu {
 
         int serverResponse = inStream.readInt();
         if (serverResponse == 0) {
-            Float value = inStream.readFloat();
-            int quantity = inStream.readInt();
-            Float stars = inStream.readFloat();
+            String[] view = (String[]) inStream.readObject();
+            String stars = view[0];
+            String value = view[1];
+            String quantity = view[2];
+
             System.out.println(wine + " is up for sale for " + value + " euros." + "\n" +
                     " There are " + quantity + " bottles available. It has " + stars + " stars.");
         } else {

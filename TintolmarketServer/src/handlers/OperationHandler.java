@@ -50,9 +50,17 @@ public class OperationHandler {
                     break;
                 case "view":
                 case "v":
-                    // out.writeObject(stateHandler.getWines());
-                    // out.flush();
-                    // break;
+                    String wineToView = op[1];
+                    String[] wineView = stateHandler.wineView(wineToView);
+                    if (wineView == null) {
+                        out.writeInt(-1);
+                        out.flush();
+                    } else {
+                        out.writeInt(0);
+                        out.writeObject(wineView);
+                        out.flush();
+                    }
+                    break;
             }
             opFromClient = (String) in.readObject();
             op = opFromClient.split(":");
