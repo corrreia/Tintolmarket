@@ -66,11 +66,8 @@ public class OperationMenu {
 
         int serverResponse = inStream.readInt();
         if (serverResponse == 0) {
-            String[] view = (String[]) inStream.readObject();
-            String stars = view[0];
-            String image = view[1];
-
-            System.out.println("Wine: " + wine + " | Stars: " + stars + " | Image: " + image);
+            String view = (String) inStream.readObject();
+            System.out.println(view);
         } else {
             System.out.println("Wine " + wine + " does not exist. Please try again.");
         }
