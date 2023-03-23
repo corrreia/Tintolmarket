@@ -48,6 +48,11 @@ public class OperationHandler {
                     out.writeInt(returnCode);
                     out.flush();
                     break;
+                case "view":
+                case "v":
+                    // out.writeObject(stateHandler.getWines());
+                    // out.flush();
+                    // break;
             }
             opFromClient = (String) in.readObject();
             op = opFromClient.split(":");

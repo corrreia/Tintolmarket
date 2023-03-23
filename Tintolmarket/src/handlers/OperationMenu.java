@@ -50,8 +50,10 @@ public class OperationMenu {
             int serverResponse = inStream.readInt();
             if (serverResponse == 0) {
                 System.out.println("Wine " + wine + " is now up for sale.");
-            } else {
+            } else if (serverResponse == -1) {
                 System.out.println("Wine " + wine + " does not exist. Please add the wine first and try again.");
+            } else {
+                System.out.println("Unexpected error. Please try again."); // should never happen
             }
         }
     }
@@ -203,7 +205,6 @@ public class OperationMenu {
                         String wine = opSplit[1];
                         String image = opSplit[2];
                         add(wine, image);
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: add <wine> <image> or a <wine> <image>");
@@ -216,7 +217,6 @@ public class OperationMenu {
                         String value = opSplit[2];
                         String quantity = opSplit[3];
                         sell(wine, value, quantity);
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: sell <wine> <value> <quantity> or s <wine> <value> <quantity>");
@@ -227,7 +227,6 @@ public class OperationMenu {
                     if (opSplit.length == 2) {
                         String wine = opSplit[1];
                         view(wine);
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: view <wine> or v <wine>");
@@ -240,7 +239,6 @@ public class OperationMenu {
                         String seller = opSplit[2];
                         String quantity = opSplit[3];
                         buy(wine, seller, quantity);
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: buy <wine> <seller> <quantity> or b <wine> <seller> <quantity>");
@@ -250,7 +248,6 @@ public class OperationMenu {
                 case "w":
                     if (opSplit.length == 1) {
                         wallet();
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: wallet or w");
@@ -262,7 +259,6 @@ public class OperationMenu {
                         String wine = opSplit[1];
                         String stars = opSplit[2];
                         classify(wine, stars);
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: classify <wine> <stars> or c <wine> <stars>");
@@ -274,7 +270,6 @@ public class OperationMenu {
                         String user = opSplit[1];
                         String message = opSplit[2];
                         talk(user, message);
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: talk <user> <message> or t <user> <message>");
@@ -284,7 +279,6 @@ public class OperationMenu {
                 case "r":
                     if (opSplit.length == 1) {
                         read();
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: read or r");
@@ -294,7 +288,6 @@ public class OperationMenu {
                 case "h":
                     if (opSplit.length == 1) {
                         showMenu();
-
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: help or h");
@@ -310,7 +303,8 @@ public class OperationMenu {
             opSplit = op.split(" ");
             command = opSplit[0];
         }
-
+        
+        System.out.println("Bye!");
         outStream.writeObject(command);
         outStream.flush();
     }

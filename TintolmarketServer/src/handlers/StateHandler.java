@@ -63,6 +63,12 @@ public class StateHandler {
         return 0; // Success
     }
 
+    public String[] wineView(String wine){
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+
     public int buySellWine(String seller, String buyer, int wineID, int quantity) {
         if (!wines.containsKey(wineID)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;

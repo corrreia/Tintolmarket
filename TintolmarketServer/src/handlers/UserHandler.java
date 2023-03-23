@@ -89,8 +89,7 @@ public class UserHandler {
             outStream.writeInt(0);
             registerUser(username, password);
             outStream.writeObject(true);
-            throw new IOException("User " + username + " registered successfully! :)\n"); // not sure if this should be
-                                                                                          // an exception
+            throw new IOException("User " + username + " registered successfully! :)\n");
         }
     }
 
