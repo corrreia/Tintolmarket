@@ -84,7 +84,7 @@ public class StateHandler {
         System.out.println(wines.toString());
 
         if (!wines.containsKey(wine.trim())) // Wine does not exist
-            return "Wine does not exist";
+            return null;
 
         WineStore wineO = wines.get(wine.trim()); // trim just in case
 
@@ -93,7 +93,9 @@ public class StateHandler {
         result.append("-------------------------\n");
         result.append("Name : " + wineO.getName() + "\n");
         result.append("Image path: " + wineO.getImage() + "\n");
-        result.append("Average rating : " + wineO.getEvaluation() + " (" + wineO.getNrOfEvaluations() + ")\n");
+        String eval = wineO.getEvaluation() == 0.0 ? "No ratings yet"
+                : (String.valueOf(wineO.getEvaluation()) + "/5 (" + wineO.getNrOfEvaluations() + " ratings)");
+        result.append("Average rating : " + eval + "\n");
         result.append("Listings : \n");
 
         users.forEach((k, v) -> {

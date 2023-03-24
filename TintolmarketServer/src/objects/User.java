@@ -17,6 +17,7 @@ public class User implements Serializable {
         this.name = name;
         this.balance = balance;
         this.wines = new LinkedList<WineUser>();
+        this.inbox = new HashMap<String, String>();
     }
 
     public void addWineListing(WineUser wine) {

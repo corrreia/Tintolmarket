@@ -1,9 +1,11 @@
 package handlers;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 public class OperationMenu {
@@ -21,17 +23,52 @@ public class OperationMenu {
         this.operation = null;
     }
 
-    private void add(String wine, String image) throws IOException {
-        operation = "add " + wine + " " + image;
-        outStream.writeObject(operation);
-        outStream.flush();
-
-        int serverResponse = inStream.readInt();
-        if (serverResponse == 0) {
-            System.out.println(wine + " added successfully.");
-        } else {
-            System.out.println(wine + "already exists.");
+    private void add(String wine, String image) {
+        // check if image is a valid image path and if the file actually exists
+        if (!image.endsWith(".jpg") && !image.endsWith(".png")) {
+            System.out.println("Image must be a .jpg or .png file. Please try again.");
+            return;
         }
+
+        File imageFile = new File(image);
+        if (!imageFile.exists()) {
+            System.out.println("Image file not found. Please try again.");
+            return;
+        }
+
+        operation = "add " + wine + " " + imageFile.getName();
+
+        // send image file
+        byte[] imageData;
+        try {
+            imageData = Files.readAllBytes(imageFile.toPath());
+        } catch (IOException e) {
+            System.out.println("Error while reading image file. Please try again.");
+            return;
+        }
+
+        try {
+            outStream.writeObject(operation);
+            outStream.writeInt(imageData.length);
+            outStream.write(imageData);
+            outStream.flush();
+        } catch (IOException e) {
+            System.out.println("Error while sending image file. Please try again.");
+            return;
+        }
+
+        int serverResponse;
+        try {
+            serverResponse = inStream.readInt();
+            if (serverResponse == 0)
+                System.out.println(wine + " added successfully.");
+            else
+                System.out.println(wine + " already exists.");
+        } catch (IOException e) {
+            System.out.println("Lost connection to server. Please try again.");
+            return;
+        }
+
     }
 
     private void sell(String wine, String value, String quantity) throws IOException {
@@ -62,8 +99,18 @@ public class OperationMenu {
 
         int serverResponse = inStream.readInt();
         if (serverResponse == 0) {
-            String view = (String) inStream.readObject();
+            String view = (String) inStream.readObject(); // read view
             System.out.println(view);
+
+            String fileName = (String) inStream.readObject(); // read image name
+            int length = inStream.readInt(); // read image length
+            byte[] image = new byte[length];
+            inStream.readFully(image); // read image
+
+            File imageFile = new File(fileName);
+            Files.write(imageFile.toPath(), image);
+
+            System.out.println("Image saved as " + fileName);
         } else {
             System.out.println("Wine " + wine + " does not exist. Please try again.");
         }
@@ -141,21 +188,18 @@ public class OperationMenu {
         outStream.writeObject(operation);
         outStream.flush();
 
-        int serverResponse = inStream.readInt();
-        if (serverResponse == 0) {
-            @SuppressWarnings("unchecked")
-            List<String> messages = (List<String>) inStream.readObject();
+        @SuppressWarnings("unchecked")
+        List<String> messages = (List<String>) inStream.readObject();
 
-            System.out.println("\n--------------------- Inbox --------------------\n");
-            if (messages.isEmpty()) {
-                System.out.println("No messages.");
-            } else {
-                for (String msg : messages) {
-                    System.out.println(msg);
-                }
+        System.out.println("\n--------------------- Inbox --------------------\n");
+        if (messages.isEmpty()) {
+            System.out.println("No messages.");
+        } else {
+            for (String msg : messages) {
+                System.out.println(msg);
             }
-            System.out.println("\n------------------------------------------------\n");
         }
+        System.out.println("\n------------------------------------------------\n");
     }
 
     private void incorrectOperation() {
@@ -261,7 +305,11 @@ public class OperationMenu {
                 case "t":
                     if (opSplit.length >= 3) {
                         String user = opSplit[1];
-                        String message = opSplit[2];
+                        // message is opSplit[2] + opSplit[3] + ... + opSplit[opSplit.length - 1]
+                        String message = "";
+                        for (int i = 2; i < opSplit.length; i++) {
+                            message += opSplit[i] + " ";
+                        }
                         talk(user, message);
                     } else {
                         incorrectOperation();
