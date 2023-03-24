@@ -3,3 +3,5 @@
 credentials.txt
 *.ser
 *.jpg
+/bin/
+*.png

@@ -306,7 +306,7 @@ public class OperationMenu {
      * Method to handle incorrect operations.
      */
     private void incorrectOperation() {
-        System.out.println("Incorrect operation. Please try again.\n Type 'help' for a list of available operations.");
+        System.out.println("Incorrect operation. Please try again.\nType 'help' for a list of available operations.");
     }
 
     /**

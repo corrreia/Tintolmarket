@@ -6,19 +6,19 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "Tintolmarket sopa",
+			"name": "Tintolmarket miguel",
 			"request": "launch",
 			"mainClass": "main.Tintolmarket",
 			"projectName": "Tintolmarket_78ab6b11",
-			"args": "localhost:12345 sopa user"
+			"args": "localhost:12345 miguel SCehfixe"
 		},
 		{
 			"type": "java",
-			"name": "Tintolmarket user",
+			"name": "Tintolmarket tomas",
 			"request": "launch",
 			"mainClass": "main.Tintolmarket",
 			"projectName": "Tintolmarket_78ab6b11",
-			"args": "localhost:12345 user user"
+			"args": "localhost:12345 tomas tesla"
 		},
 		{
 			"type": "java",

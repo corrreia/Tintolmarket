@@ -83,7 +83,7 @@ public class Tintolmarket {
                 System.out.println("Logging in...\n");
                 boolean loginSuccessful = (Boolean) inStream.readObject();
                 if (loginSuccessful){
-                    System.out.println("Welcome back " + clientID + " :)\n");
+                    System.out.println("Welcome to TintolMarket " + clientID + " :)\n");
                 }else{
                     System.out.println("Failed to login" + clientID + " :(\n");
                     System.exit(1);
@@ -92,7 +92,7 @@ public class Tintolmarket {
                 System.out.println("Registering new user...\n");
                 boolean registerSuccessful = (Boolean) inStream.readObject();
                 if(registerSuccessful){
-                    System.out.println("Welcome to TintolMarket" + clientID + " :)\n");
+                    System.out.println("Registered " + clientID + " :)\n");
                 }
             }
         } catch (ClassNotFoundException e) {
