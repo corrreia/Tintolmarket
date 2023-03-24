@@ -15,8 +15,8 @@ import java.util.List;
  * It contains the username, the input and output streams.
  * 
  * @author Tomás Correia | fc57102
- * @author Miguel Pato   | fc56372
- * @author João Vieira   | fc45677
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
  */
 public class OperationMenu {
 
@@ -29,8 +29,8 @@ public class OperationMenu {
      * Constructor for the OperationMenu class.
      * 
      * @param outStream The output stream of the user.
-     * @param inStream The input stream of the user.
-     * @param username The username of the user.
+     * @param inStream  The input stream of the user.
+     * @param username  The username of the user.
      */
     public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String username) {
         this.outStream = outStream;
@@ -99,8 +99,8 @@ public class OperationMenu {
      * Method to handle sell operations.
      * Method that takes a wine previously added and puts it up for sale.
      * 
-     * @param wine The name of the wine.
-     * @param value The value of the wine.
+     * @param wine     The name of the wine.
+     * @param value    The value of the wine.
      * @param quantity The quantity of the wine.
      * @throws IOException
      */
@@ -151,7 +151,7 @@ public class OperationMenu {
             File imageFile = new File(fileName);
             Files.write(imageFile.toPath(), image);
 
-            System.out.println("Image saved as " + fileName);
+            System.out.println("Image saved in " + imageFile.getAbsolutePath());
         } else {
             System.out.println("Wine " + wine + " does not exist. Please try again.");
         }
@@ -162,8 +162,8 @@ public class OperationMenu {
      * Method that takes a wine previously listed and buys it making
      * the proper changes in the users' wallets.
      * 
-     * @param wine The name of the wine.
-     * @param seller The name of the seller.
+     * @param wine     The name of the wine.
+     * @param seller   The name of the seller.
      * @param quantity The quantity of the wine.
      * @throws IOException
      * @throws ClassNotFoundException
@@ -190,7 +190,8 @@ public class OperationMenu {
                     System.out.println("Seller " + seller + " does not exist. Please try again.");
 
                 } else if (serverResponse == -3) {
-                    System.out.println("User " + username + " does not exist. Please try again."); //should never happen
+                    System.out.println("User " + username + " does not exist. Please try again."); // should never
+                                                                                                   // happen
 
                 } else if (serverResponse == -4) {
                     System.out.println("Seller doesnt have" + wine);
@@ -229,7 +230,7 @@ public class OperationMenu {
      * Method to handle classify operations.
      * Method that takes a wine previously added and classifies it.
      * 
-     * @param wine The name of the wine.
+     * @param wine  The name of the wine.
      * @param stars The number of stars to classify the wine.
      * @throws IOException
      * @throws ClassNotFoundException
@@ -255,10 +256,10 @@ public class OperationMenu {
 
     /**
      * Method to handle talk operations.
-     * Method that allows a user to send a message to another 
+     * Method that allows a user to send a message to another
      * resgistered user.
      * 
-     * @param user The name of the user to send the message to.
+     * @param user    The name of the user to send the message to.
      * @param message The message to send.
      * @throws IOException
      * @throws ClassNotFoundException
