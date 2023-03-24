@@ -199,9 +199,11 @@ public class OperationHandler {
                     break;
             }
 
-            opFromClient = (String) in.readObject();
-            args = opFromClient.trim().split(" ");
-            opType = args[0];
+            if (!opType.equals("quit") || !opType.equals("q")) {
+                opFromClient = (String) in.readObject();
+                args = opFromClient.trim().split(" ");
+                opType = args[0];
+            }
         }
 
         System.out.println("Closing connection with client " + user);

@@ -463,11 +463,14 @@ public class OperationMenu {
                     incorrectOperation();
                     break;
             }
-            System.out.print("Enter an operation: ");
-            op = in.readLine();
 
-            opSplit = op.trim().split(" ");
-            command = opSplit[0];
+            if (!command.equals("quit") && !command.equals("q")) {
+                System.out.print("Enter an operation: ");
+                op = in.readLine();
+
+                opSplit = op.trim().split(" ");
+                command = opSplit[0];
+            }
         }
 
         System.out.println("Bye!");
