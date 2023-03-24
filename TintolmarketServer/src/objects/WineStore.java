@@ -37,6 +37,9 @@ public class WineStore implements Serializable {
 
     public float getEvaluation() {
         float sum = 0;
+        if (evaluations.size() == 0) {
+            return 0;
+        }
         for (float evaluation : evaluations) {
             sum += evaluation;
         }

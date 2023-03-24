@@ -107,8 +107,8 @@ public class OperationHandler {
                         out.writeObject(imageFile.getName()); // send the image name
                         out.writeInt(imageBytes.length); // send the image length
                         out.write(imageBytes); // send the image
-                        out.flush();
                     }
+                    out.flush();
                     break;
                 case "buy":
                 case "b":
