@@ -6,11 +6,11 @@ import java.util.ArrayList;
 /**
  * Class that represents a wine in the store.
  * It contains the name of the wine,
- * the image of the wine and the evaluations of the wine. 
+ * the image of the wine and the evaluations of the wine.
  * 
  * @author Tomás Correia | fc57102
- * @author Miguel Pato   | fc56372
- * @author João Vieira   | fc45677
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
  */
 public class WineStore implements Serializable {
 
@@ -21,9 +21,9 @@ public class WineStore implements Serializable {
     /**
      * Constructor for the WineStore class.
      * 
-     * @param name    The name of the wine.
-     * @param image  The image of the wine.
-     * @param evaluations   The evaluations of the wine.
+     * @param name        The name of the wine.
+     * @param image       The image of the wine.
+     * @param evaluations The evaluations of the wine.
      */
     public WineStore(String name, String image, ArrayList<Float> evaluations) {
         this.name = name;
@@ -34,8 +34,8 @@ public class WineStore implements Serializable {
     /**
      * Constructor for the WineStore class.
      * 
-     * @param name    The name of the wine.
-     * @param image  The image of the wine.
+     * @param name  The name of the wine.
+     * @param image The image of the wine.
      */
     public WineStore(String name, String image) {
         this.name = name;
@@ -133,7 +133,7 @@ public class WineStore implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String toString() {
         return "Wine [evaluation=" + getEvaluation() + ", image=" + image + ", name=" + name + "]";

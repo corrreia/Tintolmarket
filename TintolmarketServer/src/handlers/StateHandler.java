@@ -20,8 +20,8 @@ import objects.WineUser;
  * It also contains the methods to save and load the state of the server.
  * 
  * @author Tomás Correia | fc57102
- * @author Miguel Pato   | fc56372
- * @author João Vieira   | fc45677
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
  */
 public class StateHandler {
     private static final int STARTING_BALANCE = 200;
@@ -69,8 +69,8 @@ public class StateHandler {
     /**
      * Adds a user to the system.
      * 
-     * @param name  The name of the user.
-     * @return    The return code.
+     * @param name The name of the user.
+     * @return The return code.
      */
     public int addUser(String name) {
         if (users.containsKey(name)) // User already exists
@@ -86,7 +86,7 @@ public class StateHandler {
      * 
      * @param name  The name of the wine.
      * @param image The image of the wine.
-     * @return    The return code.
+     * @return The return code.
      */
     public int addWine(String name, String image) {
         if (wines.containsKey(name)) // Wine already exists
@@ -100,11 +100,11 @@ public class StateHandler {
     /**
      * Adds a wine listing to a user.
      * 
-     * @param user    The name of the user.
-     * @param wine    The name of the wine.
+     * @param user     The name of the user.
+     * @param wine     The name of the wine.
      * @param quantity The quantity of the wine.
-     * @param price   The price of the wine.
-     * @return      The return code.
+     * @param price    The price of the wine.
+     * @return The return code.
      */
     public int addWineListingToUser(String user, String wine, int quantity, float price) {
         if (!wines.containsKey(wine)) // Wine does not exist
@@ -126,8 +126,8 @@ public class StateHandler {
      * - average rating
      * - listings
      * 
-     * @param wine  The name of the wine.
-     * @return    The view of the wine.
+     * @param wine The name of the wine.
+     * @return The view of the wine.
      */
     public String wineView(String wine) {
 
@@ -158,15 +158,15 @@ public class StateHandler {
 
         return result.toString();
     }
-    
+
     /**
      * Takes care of the buying and selling of wines.
      * 
-     * @param seller    The name of the seller.
+     * @param seller   The name of the seller.
      * @param buyer    The name of the buyer.
-     * @param wine  The name of the wine.
-     * @param quantity  The quantity of the wine.
-     * @return    The return code.
+     * @param wine     The name of the wine.
+     * @param quantity The quantity of the wine.
+     * @return The return code.
      */
     public int buySellWine(String seller, String buyer, String wine, int quantity) {
         if (!wines.containsKey(wine)) // Wine does not exist
@@ -208,8 +208,8 @@ public class StateHandler {
     /**
      * Gets the balance of a user.
      * 
-     * @param user  The name of the user.
-     * @return    The balance of the user.
+     * @param user The name of the user.
+     * @return The balance of the user.
      */
     public float getBalance(String user) {
         if (!users.containsKey(user))
@@ -222,7 +222,7 @@ public class StateHandler {
      * 
      * @param wine  The name of the wine.
      * @param stars The number of stars (rating).
-     * @return    The return code.
+     * @return The return code.
      */
     public int classify(String wine, String stars) {
         if (!wines.containsKey(wine)) // Wine does not exist
@@ -238,9 +238,9 @@ public class StateHandler {
      * Sends a message to a user. The message is stored in the inbox of the user.
      * 
      * @param from    The name of the sender.
-     * @param to    The name of the receiver.
+     * @param to      The name of the receiver.
      * @param message The message.
-     * @return    The return code.
+     * @return The return code.
      */
     public int talk(String from, String to, String message) {
         if (!users.containsKey(to)) // User does not exist
@@ -255,8 +255,8 @@ public class StateHandler {
     /**
      * Reads the inbox of a user.
      * 
-     * @param user  The name of the user.
-     * @return    The inbox of the user.
+     * @param user The name of the user.
+     * @return The inbox of the user.
      */
     public List<String> read(String user) {
         if (!users.containsKey(user)) // User does not exist
