@@ -1,39 +1,49 @@
 package objects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class WineStore implements Serializable {
 
     private String name;
     private String image;
-    private float evaluation;
-    private int nrOfEvaluations;
+    private ArrayList<Float> evaluations;
 
-    public WineStore(String name, String image, float evaluation, int nrOfEvaluations) {
+    /**
+     *
+     * @param name
+     * @param image
+     * @param evaluations
+     */
+    public WineStore(String name, String image, ArrayList<Float> evaluations) {
         this.name = name;
         this.image = image;
-        this.evaluation = evaluation;
-        this.nrOfEvaluations = nrOfEvaluations;
+        this.evaluations = evaluations;
     }
 
     public WineStore(String name, String image) {
         this.name = name;
         this.image = image;
-        this.evaluation = 0;
-        this.nrOfEvaluations = 0;
+        this.evaluations = new ArrayList<Float>();
     }
 
     public void newEvaluation(float evaluation) {
-        this.evaluation = (this.evaluation + evaluation) / (this.nrOfEvaluations + 1);
-        this.nrOfEvaluations++;
+        evaluations.add(evaluation);
     }
 
     public int getNrOfEvaluations() {
-        return nrOfEvaluations;
+        return evaluations.size();
     }
 
     public float getEvaluation() {
-        return evaluation;
+        float sum = 0;
+        for (float evaluation : evaluations) {
+            sum += evaluation;
+        }
+        if (sum / evaluations.size() == 0) {
+            return 0;
+        }
+        return sum / evaluations.size();
     }
 
     public String getImage() {
@@ -41,11 +51,11 @@ public class WineStore implements Serializable {
     }
 
     public void setNrOfEvaluations(int nrOfEvaluations) {
-        this.nrOfEvaluations = nrOfEvaluations;
+        this.evaluations = new ArrayList<Float>();
     }
 
     public void setEvaluation(float evaluation) {
-        this.evaluation = evaluation;
+        this.evaluations.add(evaluation);
     }
 
     public void setImage(String image) {
@@ -62,6 +72,6 @@ public class WineStore implements Serializable {
 
     @Override
     public String toString() {
-        return "Wine [evaluation=" + evaluation + ", image=" + image + ", name=" + getName() + "]";
+        return "Wine [evaluation=" + getEvaluation() + ", image=" + image + ", name=" + name + "]";
     }
 }
