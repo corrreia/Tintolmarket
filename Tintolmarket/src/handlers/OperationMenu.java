@@ -1,9 +1,11 @@
 package handlers;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 public class OperationMenu {
@@ -22,16 +24,36 @@ public class OperationMenu {
     }
 
     private void add(String wine, String image) throws IOException {
-        operation = "add " + wine + " " + image;
-        outStream.writeObject(operation);
-        outStream.flush();
-
-        int serverResponse = inStream.readInt();
-        if (serverResponse == 0) {
-            System.out.println(wine + " added successfully.");
+        // check if image is a valid image path and if the file actually exists
+        if (!image.endsWith(".jpg") && !image.endsWith(".png")) {
+            System.out.println("Image must be a .jpg or .png file. Please try again.");
+            return;
         } else {
-            System.out.println(wine + "already exists.");
+            File imageFile = new File(image);
+            if (!imageFile.exists()) {
+                System.out.println("Image file not found. Please try again.");
+                return;
+            }
+
+            operation = "add " + wine + " " + image;
+            outStream.writeObject(operation);
+
+            // send image file
+            byte[] imageData = Files.readAllBytes(imageFile.toPath());
+            
+            outStream.writeInt(imageData.length);
+            outStream.write(imageData);
+
+            outStream.flush();
+
+            int serverResponse = inStream.readInt();
+            if (serverResponse == 0) {
+                System.out.println(wine + " added successfully.");
+            } else {
+                System.out.println(wine + "already exists.");
+            }
         }
+
     }
 
     private void sell(String wine, String value, String quantity) throws IOException {
