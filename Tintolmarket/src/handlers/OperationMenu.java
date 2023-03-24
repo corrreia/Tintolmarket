@@ -8,6 +8,16 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.List;
 
+/**
+ * Class that handles the operations input by the user and
+ * sends them to the server.
+ * 
+ * It contains the username, the input and output streams.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato   | fc56372
+ * @author João Vieira   | fc45677
+ */
 public class OperationMenu {
 
     private ObjectOutputStream outStream;
@@ -15,6 +25,13 @@ public class OperationMenu {
     private String username;
     private String operation;
 
+    /**
+     * Constructor for the OperationMenu class.
+     * 
+     * @param outStream The output stream of the user.
+     * @param inStream The input stream of the user.
+     * @param username The username of the user.
+     */
     public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String username) {
         this.outStream = outStream;
         this.inStream = inStream;
@@ -23,6 +40,13 @@ public class OperationMenu {
         this.operation = null;
     }
 
+    /**
+     * Method to handle add operations.
+     * Also sends the image of the wine to the server.
+     * 
+     * @param wine  The name of the wine.
+     * @param image The path to the image of the wine.
+     */
     private void add(String wine, String image) {
         // check if image is a valid image path and if the file actually exists
         if (!image.endsWith(".jpg") && !image.endsWith(".png")) {
@@ -71,6 +95,15 @@ public class OperationMenu {
 
     }
 
+    /**
+     * Method to handle sell operations.
+     * Method that takes a wine previously added and puts it up for sale.
+     * 
+     * @param wine The name of the wine.
+     * @param value The value of the wine.
+     * @param quantity The quantity of the wine.
+     * @throws IOException
+     */
     private void sell(String wine, String value, String quantity) throws IOException {
         // can't sell 0 quantity and can't sell a wine for 0 value
         if (Integer.parseInt(quantity) <= 0 || Integer.parseInt(value) <= 0) {
@@ -91,6 +124,14 @@ public class OperationMenu {
         }
     }
 
+    /**
+     * Method to handle view operations.
+     * Method that takes a wine previously listed and prints its information.
+     * 
+     * @param wine The name of the wine.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void view(String wine) throws IOException, ClassNotFoundException {
         operation = "view " + wine;
 
@@ -116,6 +157,17 @@ public class OperationMenu {
         }
     }
 
+    /**
+     * Method to handles buy operations.
+     * Method that takes a wine previously listed and buys it making
+     * the proper changes in the users' wallets.
+     * 
+     * @param wine The name of the wine.
+     * @param seller The name of the seller.
+     * @param quantity The quantity of the wine.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void buy(String wine, String seller, String quantity) throws IOException {
         if (seller.equals(username)) {
             System.out.println("You can't buy your own wine. Please try again.");
@@ -138,6 +190,13 @@ public class OperationMenu {
         }
     }
 
+    /**
+     * Method to handle wallet operations.
+     * Method that prints the current amount of money in the user's wallet.
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void wallet() throws IOException {
         operation = "wallet";
         outStream.writeObject(operation);
@@ -151,6 +210,15 @@ public class OperationMenu {
         }
     }
 
+    /**
+     * Method to handle classify operations.
+     * Method that takes a wine previously added and classifies it.
+     * 
+     * @param wine The name of the wine.
+     * @param stars The number of stars to classify the wine.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void classify(String wine, String stars) throws IOException {
         // parse stars to float
         float starsFloat = Float.parseFloat(stars);
@@ -170,6 +238,16 @@ public class OperationMenu {
         }
     }
 
+    /**
+     * Method to handle talk operations.
+     * Method that allows a user to send a message to another 
+     * resgistered user.
+     * 
+     * @param user The name of the user to send the message to.
+     * @param message The message to send.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void talk(String user, String message) throws IOException {
         operation = "talk " + user + " " + message;
         outStream.writeObject(operation);
@@ -183,6 +261,13 @@ public class OperationMenu {
         }
     }
 
+    /**
+     * Method to handle read operations.
+     * Method that prints all the messages received by the user.
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void read() throws IOException, ClassNotFoundException {
         operation = "read";
         outStream.writeObject(operation);
@@ -202,10 +287,17 @@ public class OperationMenu {
         System.out.println("\n------------------------------------------------\n");
     }
 
+    /**
+     * Method to handle incorrect operations.
+     */
     private void incorrectOperation() {
         System.out.println("Incorrect operation. Please try again.\n Type 'help' for a list of available operations.");
     }
 
+    /**
+     * Method to handle help operations.
+     * Method that prints a list of all the available operations.
+     */
     public void showMenu() {
         System.out.println("\n___________________________________________________\n"
                 + "**************************************************************\n"
@@ -226,6 +318,23 @@ public class OperationMenu {
                 + "**************************************************************\n");
     }
 
+    /**
+     * Method to handle the client's operations.
+     * Operations such as:
+     * - add <wine> <image> or a <wine> <image>
+     * - sell <wine> <value> <quantity> or s <wine> <value> <quantity>\
+     * - view <wine> or v <wine>
+     * - buy <wine> <seller> <quantity> or b <wine> <seller> <quantity>
+     * - wallet or w
+     * - classify <wine> <stars> or c <wine> <stars>
+     * - talk <user> <message> or t <user> <message>
+     * - read or r
+     * - help or h
+     * - quit or q
+     * 
+     * @param in The buffer reader to read the user's input.
+     * @throws Exception
+     */
     public void receiveOperation(BufferedReader in) throws Exception {
         System.out.print("Enter an operation: ");
         String op = in.readLine();
@@ -233,7 +342,7 @@ public class OperationMenu {
         String[] opSplit = op.trim().split(" ");
         String command = opSplit[0];
 
-        while (!command.equals("quit")) {
+        while (!command.equals("quit") && !command.equals("q")) {
 
             switch (command) {
                 case "add":

@@ -6,12 +6,19 @@ import java.net.*;
 import exceptions.IncorrectParametersClientException;
 import handlers.OperationMenu;
 
+/**
+ * Class that represents the client of the Tintolmarket application.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato   | fc56372
+ * @author João Vieira   | fc45677
+ */
 public class Tintolmarket {
 
     private static final int DEFAULT_PORT = 12345;
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Tintolmarket Client v0.1");
+        System.out.println("Tintolmarket Client v1.0");
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
         try {

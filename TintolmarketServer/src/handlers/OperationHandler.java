@@ -8,6 +8,17 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.List;
 
+/**
+ * Class that handles the operations of the server.
+ * It contains the username, the input and output streams.
+ * 
+ * Takes care of the operations that the client can do
+ * and sends the appropriate response to the client.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato   | fc56372
+ * @author João Vieira   | fc45677
+ */
 public class OperationHandler {
 
     private static final String IMAGES_FROM_CLIENT = "serverWineImages";
@@ -16,9 +27,17 @@ public class OperationHandler {
 
     private static StateHandler stateHandler;
 
+    /**
+     * Constructor for the OperationHandler class.
+     */
     public OperationHandler() {
     }
 
+    /**
+     * Gets the instance of the OperationHandler class (Singleton).
+     * 
+     * @return The instance of the OperationHandler class.
+     */
     public static OperationHandler getInstace() {
         stateHandler = StateHandler.getInstance();
 
@@ -28,6 +47,26 @@ public class OperationHandler {
         return instance;
     }
 
+    /**
+     * Receives the operations from the client and processes them.
+     * Operations such as:
+     * - add <wine> <image> or a <wine> <image>
+     * - sell <wine> <value> <quantity> or s <wine> <value> <quantity>\
+     * - view <wine> or v <wine>
+     * - buy <wine> <seller> <quantity> or b <wine> <seller> <quantity>
+     * - wallet or w
+     * - classify <wine> <stars> or c <wine> <stars>
+     * - talk <user> <message> or t <user> <message>
+     * - read or r
+     * - help or h
+     * - quit or q
+     * 
+     * @param user The username of the client.
+     * @param out The output stream of the client.
+     * @param in The input stream of the client.
+     * @throws IOException If there is an error with the streams.
+     * @throws ClassNotFoundException if there is an error with the class.
+     */
     public void receiveAndProcessOps(String user, ObjectOutputStream out, ObjectInputStream in)
             throws IOException, ClassNotFoundException {
 
@@ -36,7 +75,7 @@ public class OperationHandler {
         String[] args = opFromClient.trim().split(" ");
         String opType = args[0];
 
-        while (!opType.equals("exit")) {
+        while (!opType.equals("quit") && !opType.equals("q")) {
             System.out.println("Received operation: " + opFromClient);
             switch (opType) {
                 case "add":
