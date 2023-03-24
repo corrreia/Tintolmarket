@@ -6,20 +6,6 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "Tintolmarket",
-			"request": "launch",
-			"mainClass": "main.Tintolmarket",
-			"projectName": "Tintolmarket_e30258a2"
-		},
-		{
-			"type": "java",
-			"name": "TintolmarketServer",
-			"request": "launch",
-			"mainClass": "main.TintolmarketServer",
-			"projectName": "Tintolmarket_e30258a2"
-		},
-		{
-			"type": "java",
 			"name": "Tintolmarket sopa",
 			"request": "launch",
 			"mainClass": "main.Tintolmarket",

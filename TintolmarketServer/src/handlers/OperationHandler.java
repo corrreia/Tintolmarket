@@ -9,7 +9,7 @@ import java.util.List;
 
 public class OperationHandler {
 
-    private static final String IMAGES_FROM_CLIENT = "TintolmarketServer";
+    private static final String IMAGES_FROM_CLIENT = "serverWineImages";
 
     private static OperationHandler instance;
 
@@ -42,29 +42,34 @@ public class OperationHandler {
                 case "a":
                     System.out.println("Adding wine");
                     String wineName = args[1];
-                    String wineImage = args[2];
+                    String imageFileName = args[2];
 
                     File directory = new File(IMAGES_FROM_CLIENT);
                     if (!directory.exists()) {
                         directory.mkdir(); // create the directory if it doesn't exist
+                        System.out.println("Directory created: " + directory.getAbsolutePath());
                     }
 
                     int imageDataLength = in.readInt();
                     byte[] imageData = new byte[imageDataLength];
                     in.readFully(imageData);
 
-                    System.out.println("Image received: " + wineImage);
+                    System.out.println("Image received: " + imageFileName);
                     System.out.println("Image length: " + imageDataLength);
 
-                    // get only the last part of the path
-                    wineImage = wineImage.substring(wineImage.lastIndexOf("\\") + 1, wineImage.length());
+                    if (imageFileName.endsWith(".jpg")) {
+                        imageFileName = wineName + ".jpg";
+                    } else {
+                        imageFileName = wineName + ".png";
+                    }
 
-                    File imageFile = new File(IMAGES_FROM_CLIENT + "/" + wineImage);
-                    FileOutputStream fos = new FileOutputStream(imageFile);
+                    File file = new File(IMAGES_FROM_CLIENT + "/" + imageFileName);
+                    FileOutputStream fos = new FileOutputStream(file);
                     fos.write(imageData);
+                    fos.flush();
                     fos.close();
 
-                    out.writeInt(stateHandler.addWine(wineName, wineImage));
+                    out.writeInt(stateHandler.addWine(wineName, imageFileName));
                     out.flush();
                     break;
                 case "sell":

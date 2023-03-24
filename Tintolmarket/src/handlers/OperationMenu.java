@@ -23,35 +23,51 @@ public class OperationMenu {
         this.operation = null;
     }
 
-    private void add(String wine, String image) throws IOException {
+    private void add(String wine, String image) {
         // check if image is a valid image path and if the file actually exists
         if (!image.endsWith(".jpg") && !image.endsWith(".png")) {
             System.out.println("Image must be a .jpg or .png file. Please try again.");
             return;
-        } else {
-            File imageFile = new File(image);
-            if (!imageFile.exists()) {
-                System.out.println("Image file not found. Please try again.");
-                return;
-            }
+        }
 
-            operation = "add " + wine + " " + image;
+        
+        File imageFile = new File(image);
+        if (!imageFile.exists()) {
+            System.out.println("Image file not found. Please try again.");
+            return;
+        }
+
+        operation = "add " + wine + " " + imageFile.getName();
+
+        // send image file
+        byte[] imageData;
+        try {
+            imageData = Files.readAllBytes(imageFile.toPath());
+        } catch (IOException e) {
+            System.out.println("Error while reading image file. Please try again.");
+            return;
+        }
+
+        try {
             outStream.writeObject(operation);
-
-            // send image file
-            byte[] imageData = Files.readAllBytes(imageFile.toPath());
-            
             outStream.writeInt(imageData.length);
             outStream.write(imageData);
-
             outStream.flush();
+        } catch (IOException e) {
+            System.out.println("Error while sending image file. Please try again.");
+            return;
+        }
 
-            int serverResponse = inStream.readInt();
-            if (serverResponse == 0) {
+        int serverResponse;
+        try {
+            serverResponse = inStream.readInt();
+            if (serverResponse == 0)
                 System.out.println(wine + " added successfully.");
-            } else {
-                System.out.println(wine + "already exists.");
-            }
+            else
+                System.out.println(wine + " already exists.");
+        } catch (IOException e) {
+            System.out.println("Lost connection to server. Please try again.");
+            return;
         }
 
     }
