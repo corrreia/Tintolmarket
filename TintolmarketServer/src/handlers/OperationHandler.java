@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 public class OperationHandler {
@@ -92,8 +93,20 @@ public class OperationHandler {
                         out.writeInt(-1);
                         out.flush();
                     } else {
-                        out.writeInt(0);
-                        out.writeObject(wineView);
+                        // go on to IMAGES_FROM_CLIENT get the image and send it
+                        // it could be a .jpg or a .png
+                        // IMAGES_FROM_CLIENT + File.separator + wineToView
+                        File imageFile = new File(IMAGES_FROM_CLIENT + File.separator + wineToView + ".jpg");
+                        if (!imageFile.exists()) {
+                            imageFile = new File(IMAGES_FROM_CLIENT + File.separator + wineToView + ".png");
+                        }
+                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+
+                        out.writeInt(0); // no error
+                        out.writeObject(wineView); // send the wine info
+                        out.writeObject(imageFile.getName()); // send the image name
+                        out.writeInt(imageBytes.length); // send the image length
+                        out.write(imageBytes); // send the image
                         out.flush();
                     }
                     break;
@@ -129,7 +142,11 @@ public class OperationHandler {
                 case "t":
                     System.out.println("Talking to user");
                     String userToTalk = args[1];
-                    String message = args[2];
+                    // message is args[2] and on
+                    String message = "";
+                    for (int i = 2; i < args.length; i++) {
+                        message += args[i] + " ";
+                    }
                     int userTalk = stateHandler.talk(user, userToTalk, message);
                     out.writeInt(userTalk);
                     out.flush();
