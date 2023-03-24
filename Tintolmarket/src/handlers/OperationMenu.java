@@ -19,7 +19,6 @@ import java.util.List;
  * @author João Vieira | fc45677
  */
 public class OperationMenu {
-    private static final String IMAGES_FROM_CLIENT = "clientWineImages";
 
     private ObjectOutputStream outStream;
     private ObjectInputStream inStream;
@@ -149,7 +148,7 @@ public class OperationMenu {
             byte[] image = new byte[length];
             inStream.readFully(image); // read image
 
-            File imageFile = new File(IMAGES_FROM_CLIENT + File.separator + fileName);
+            File imageFile = new File(fileName);
             Files.write(imageFile.toPath(), image);
 
             System.out.println("Image saved in " + imageFile.getAbsolutePath());
