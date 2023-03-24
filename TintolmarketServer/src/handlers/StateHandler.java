@@ -14,6 +14,15 @@ import objects.User;
 import objects.WineStore;
 import objects.WineUser;
 
+/**
+ * Class that handles the state of the server.
+ * It contains the users and the wines in the system.
+ * It also contains the methods to save and load the state of the server.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato   | fc56372
+ * @author João Vieira   | fc45677
+ */
 public class StateHandler {
     private static final int STARTING_BALANCE = 200;
     private static final String USERS_FILE = "users.ser";
@@ -37,6 +46,10 @@ public class StateHandler {
     private HashMap<String, WineStore> wines;
     // ---
 
+    /**
+     * Constructor for the StateHandler class.
+     * It loads the users and the wines from the files.
+     */
     private StateHandler() {
         this.users = new HashMap<String, User>();
         this.wines = new HashMap<String, WineStore>();
@@ -44,12 +57,21 @@ public class StateHandler {
         loadWines();
     }
 
+    /**
+     * Gets the instance of the StateHandler class (Singleton).
+     */
     public static StateHandler getInstance() { // Singleton
         if (instance == null)
             instance = new StateHandler();
         return instance;
     }
 
+    /**
+     * Adds a user to the system.
+     * 
+     * @param name  The name of the user.
+     * @return    The return code.
+     */
     public int addUser(String name) {
         if (users.containsKey(name)) // User already exists
             return USER_ALREADY_EXISTS;
@@ -59,6 +81,13 @@ public class StateHandler {
         return 0; // Success
     }
 
+    /**
+     * Adds a wine to the system.
+     * 
+     * @param name  The name of the wine.
+     * @param image The image of the wine.
+     * @return    The return code.
+     */
     public int addWine(String name, String image) {
         if (wines.containsKey(name)) // Wine already exists
             return WINE_ALREADY_EXISTS;
@@ -68,6 +97,15 @@ public class StateHandler {
         return 0; // Success
     }
 
+    /**
+     * Adds a wine listing to a user.
+     * 
+     * @param user    The name of the user.
+     * @param wine    The name of the wine.
+     * @param quantity The quantity of the wine.
+     * @param price   The price of the wine.
+     * @return      The return code.
+     */
     public int addWineListingToUser(String user, String wine, int quantity, float price) {
         if (!wines.containsKey(wine)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
@@ -80,6 +118,17 @@ public class StateHandler {
         return SUCCESS; // Success
     }
 
+    /**
+     * Gets a view of a wine with a given name.
+     * returns a string with the wine information such as:
+     * - name
+     * - image path
+     * - average rating
+     * - listings
+     * 
+     * @param wine  The name of the wine.
+     * @return    The view of the wine.
+     */
     public String wineView(String wine) {
         System.out.println(wines.toString());
 
@@ -108,7 +157,16 @@ public class StateHandler {
 
         return result.toString();
     }
-
+    
+    /**
+     * Takes care of the buying and selling of wines.
+     * 
+     * @param seller    The name of the seller.
+     * @param buyer    The name of the buyer.
+     * @param wine  The name of the wine.
+     * @param quantity  The quantity of the wine.
+     * @return    The return code.
+     */
     public int buySellWine(String seller, String buyer, String wine, int quantity) {
         if (!wines.containsKey(wine)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
@@ -146,12 +204,25 @@ public class StateHandler {
         return SUCCESS;
     }
 
+    /**
+     * Gets the balance of a user.
+     * 
+     * @param user  The name of the user.
+     * @return    The balance of the user.
+     */
     public float getBalance(String user) {
         if (!users.containsKey(user))
             return USER_DOES_NOT_EXIST;
         return users.get(user).getBalance();
     }
 
+    /**
+     * Classifies a wine.
+     * 
+     * @param wine  The name of the wine.
+     * @param stars The number of stars (rating).
+     * @return    The return code.
+     */
     public int classify(String wine, String stars) {
         if (!wines.containsKey(wine)) // Wine does not exist
             return WINE_DOES_NOT_EXIST;
@@ -162,6 +233,14 @@ public class StateHandler {
         return SUCCESS;
     }
 
+    /**
+     * Sends a message to a user. The message is stored in the inbox of the user.
+     * 
+     * @param from    The name of the sender.
+     * @param to    The name of the receiver.
+     * @param message The message.
+     * @return    The return code.
+     */
     public int talk(String from, String to, String message) {
         if (!users.containsKey(to)) // User does not exist
             return USER_DOES_NOT_EXIST;
@@ -172,6 +251,12 @@ public class StateHandler {
         return SUCCESS;
     }
 
+    /**
+     * Reads the inbox of a user.
+     * 
+     * @param user  The name of the user.
+     * @return    The inbox of the user.
+     */
     public List<String> read(String user) {
         if (!users.containsKey(user)) // User does not exist
             return null;
@@ -185,6 +270,9 @@ public class StateHandler {
         return result;
     }
 
+    /**
+     * Synchronizes the users in a .ser file.
+     */
     public void syncUsers() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(USERS_FILE))) {
             oos.writeObject(users);
@@ -195,6 +283,9 @@ public class StateHandler {
         }
     }
 
+    /**
+     * Synchronizes the wines in a .ser file.
+     */
     public void syncWines() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(WINES_FILE))) {
             oos.writeObject(wines);
@@ -205,11 +296,17 @@ public class StateHandler {
         }
     }
 
+    /**
+     * Synchronizes the users and wines in a .ser file.
+     */
     public void sync() {
         syncUsers();
         syncWines();
     }
 
+    /**
+     * Loads the users from a .ser file.
+     */
     public void loadUsers() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(USERS_FILE))) {
             users = (HashMap<String, User>) ois.readObject();
@@ -222,6 +319,9 @@ public class StateHandler {
         }
     }
 
+    /**
+     * Loads the wines from a .ser file.
+     */
     public void loadWines() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(WINES_FILE))) {
             wines = (HashMap<String, WineStore>) ois.readObject();
@@ -234,6 +334,9 @@ public class StateHandler {
         }
     }
 
+    /**
+     * Loads the users and wines from a .ser file.
+     */
     public void load() {
         loadUsers();
         loadWines();

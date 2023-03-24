@@ -8,9 +8,13 @@ import java.net.Socket;
 
 import handlers.UserHandler;
 import exceptions.TooManyArgumentsServerException;
-
-//Servidor myServer\
-
+/**
+ * Class that represents the server of the Tintolmarket application.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato   | fc56372
+ * @author João Vieira   | fc45677
+ */
 public class TintolmarketServer {
 
 	public static void main(String[] args) {
