@@ -158,10 +158,7 @@ public class StateHandler {
 
         WineStore wineO = wines.get(wine);
         wineO.newEvaluation(Float.parseFloat(stars));
-
-        System.out.println("tens truwe");
         syncWines();
-        System.out.println("che dred");
         return SUCCESS;
     }
 

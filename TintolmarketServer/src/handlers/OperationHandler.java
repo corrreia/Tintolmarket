@@ -93,7 +93,7 @@ public class OperationHandler {
                     String wineToClassify = args[1];
                     String classification = args[2];
                     int wineClassify = stateHandler.classify(wineToClassify, classification);
-                    out.write(wineClassify);
+                    out.writeInt(wineClassify);
                     out.flush();
                     break;
                 case "talk":

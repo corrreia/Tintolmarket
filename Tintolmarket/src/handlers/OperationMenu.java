@@ -4,23 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.text.ParseException;
 import java.util.List;
-import java.util.PrimitiveIterator.OfDouble;
 
 public class OperationMenu {
 
     private ObjectOutputStream outStream;
     private ObjectInputStream inStream;
     private String username;
-    private String password;
     private String operation;
 
-    public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String username, String password) {
+    public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String username) {
         this.outStream = outStream;
         this.inStream = inStream;
         this.username = username;
-        this.password = password;
 
         this.operation = null;
     }
