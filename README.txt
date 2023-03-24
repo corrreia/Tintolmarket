@@ -41,7 +41,7 @@
 
     - Para executar o cliente Tintolmarket:
         - Run configurations com arguments: 127.0.0.1:12345 <user> <password> (user e password à escolha) 
-        
+
 ------------------------- Limitações -----------------------------
 
   - Sem limitações conhecidas
@@ -73,4 +73,6 @@
  "jars" é criada uma pasta "serverWineImages" que contém todas as imagens enviadas
  pelo cliente e recebidas pelo servidor.
 
+ - Quando terminado o client com CTRL-C dá uma exceção por causa do trim, esta em nada afeta 
+ a execução do programa. Por isto optar por terminar sempre o uso com o comando "quit" ou "q".
  
