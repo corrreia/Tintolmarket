@@ -130,7 +130,6 @@ public class StateHandler {
      * @return    The view of the wine.
      */
     public String wineView(String wine) {
-        System.out.println(wines.toString());
 
         if (!wines.containsKey(wine.trim())) // Wine does not exist
             return null;

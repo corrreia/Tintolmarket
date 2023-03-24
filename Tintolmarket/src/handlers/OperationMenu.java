@@ -183,8 +183,23 @@ public class OperationMenu {
                 int serverResponse = inStream.readInt();
                 if (serverResponse == 0) {
                     System.out.println(quantity + " bottles of " + wine + " bought successfully.");
-                } else {
+                } else if (serverResponse == -1) {
                     System.out.println("Wine " + wine + " does not exist. Please try again.");
+
+                } else if (serverResponse == -2) {
+                    System.out.println("Seller " + seller + " does not exist. Please try again.");
+
+                } else if (serverResponse == -3) {
+                    System.out.println("User " + username + " does not exist. Please try again."); //should never happen
+
+                } else if (serverResponse == -4) {
+                    System.out.println("Seller doesnt have" + wine);
+
+                } else if (serverResponse == -5) {
+                    System.out.println("Seller doesnt have enough " + wine);
+
+                } else if (serverResponse == -6) {
+                    System.out.println("User " + username + " does not have enough money. Please try again.");
                 }
             }
         }
