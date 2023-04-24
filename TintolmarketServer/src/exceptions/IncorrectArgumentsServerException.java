@@ -8,7 +8,7 @@ package exceptions;
  * @author Miguel Pato   | fc56372
  * @author João Vieira   | fc45677
  */
-public class TooManyArgumentsServerException extends Exception {
+public class IncorrectArgumentsServerException extends Exception {
     private String message;
     
     /**
@@ -16,7 +16,7 @@ public class TooManyArgumentsServerException extends Exception {
      * 
      * @param message The message to be displayed.
      */
-    public TooManyArgumentsServerException(String message) {
+    public IncorrectArgumentsServerException(String message) {
         this.message = message;
     }
 

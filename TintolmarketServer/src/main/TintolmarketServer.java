@@ -6,8 +6,11 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.net.ssl.SSLServerSocket;
+
 import handlers.UserHandler;
-import exceptions.TooManyArgumentsServerException;
+import security.ServerSecurityManager;
+import exceptions.IncorrectArgumentsServerException;
 /**
  * Class that represents the server of the Tintolmarket application.
  * 
@@ -21,46 +24,47 @@ public class TintolmarketServer {
 		System.out.println("------------------------=TintolmarketServer=------------------------");
 		TintolmarketServer server = new TintolmarketServer();
 		try {
-			if (args.length > 1) {
-				throw new TooManyArgumentsServerException("Too many arguments");
+			if (args.length < 3 || args.length > 4) {
+				throw new IncorrectArgumentsServerException("Incorrect number of arguments.");
 			}
-
-			if (args.length == 0) {
-				System.out.println("No port specified. Using default port 12345");
-				server.startServer(12345);
-			} else {
-				int port = Integer.parseInt(args[0]);
-				System.out.println("Using port " + port);
-				server.startServer(port);
+			int port = args.length == 4 ? Integer.parseInt(args[0]) : 12345;
+			String cipherPassword = args[args.length - 3];
+			String keyStoreName = args[args.length - 2];
+			String keyStorePassword = args[args.length - 1];
+			
+			if(!keyStoreName.contains(".keystore")) {
+				keyStoreName += ".keystore";
 			}
-
-		} catch (NumberFormatException | TooManyArgumentsServerException e) {
+			
+			server.startServer(port, cipherPassword, keyStoreName, keyStorePassword);
+	
+		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
-			System.out.println("Usage: TintolmarketServer <port>\n");
+			System.out.println("Usage: TintolmarketServer [<port>] <password-cifra> <keystore> <password-keystore>\n");
 		}
 	}
 
-	public void startServer(int port) {
-		ServerSocket sSoc = null;
+	public void startServer(int port, String cipherPassword, String keyStoreName, String keyStorePassword) {
+		SSLServerSocket SSLserverSocket = null;
 
 		try {
-			sSoc = new ServerSocket(port);
-			while (true) {
-				try {
-					System.out.println("Waiting for connections...");
-					Socket inSoc = sSoc.accept();
-					System.out.println("Connection established with " + inSoc.getInetAddress().getHostAddress());
-					ServerThread newServerThread = new ServerThread(inSoc);
-					newServerThread.start();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			SSLserverSocket = ServerSecurityManager.connect(port, keyStoreName, keyStorePassword);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
 
+		while(true){
+			try{
+				System.out.println("Waiting for connections...");
+				Socket socket = SSLserverSocket.accept();
+				System.out.println("Connection established with " + socket.getInetAddress().getHostAddress());
+				ServerThread newServerThread = new ServerThread(socket);
+				newServerThread.start();
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			}
+		}
 	}
 
 	// Threads utilizadas para comunicacao com os clientes
