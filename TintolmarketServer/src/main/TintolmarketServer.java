@@ -82,21 +82,20 @@ public class TintolmarketServer {
 				ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
 				ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
 
-				String userID = null;
-				String passwd = null;
 
 				Thread.sleep(100);
-
 				try {
-					userID = (String) inStream.readObject();
-					passwd = (String) inStream.readObject();
-					System.out.println("userID and Password received\n");
+					String userID = (String) inStream.readObject();
+					System.out.println("userID received\n");
+
+					ServerSecurityManager.authenticate(outStream, inStream, userID);
+
 				} catch (ClassNotFoundException e1) {
 					e1.printStackTrace();
 				}
 
-				if (userID != null && passwd != null) {
-					uH = UserHandler.authenticate(userID, passwd, inStream, outStream);
+				if (userID != null) {
+					uH = UserHandler.authenticate(userID, inStream, outStream);
 					if (uH != null) {
 						uH.handleOps();
 					}
