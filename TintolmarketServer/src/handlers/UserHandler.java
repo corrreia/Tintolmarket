@@ -37,12 +37,11 @@ public class UserHandler {
      * @param outStream The output stream of the user.
      * @throws IOException  If there is an error with the streams.
      */
-    private UserHandler(String username, ObjectInputStream inStream, ObjectOutputStream outStream) throws IOException {
-
+    public UserHandler(String username, ObjectInputStream inStream, ObjectOutputStream outStream) throws IOException {
         this.outStream = outStream;
         this.inStream = inStream;
         this.username = username;
-
+        checkFile();
     }
 
     /**
@@ -71,9 +70,9 @@ public class UserHandler {
      * @return  True if the user was registered successfully.
      * @throws IOException  If there is an error with the FileOutputStream.
      */
-    private static boolean registerUser(String userID, String passwd) throws IOException {
+    public static boolean registerUser(String userID, String userCertificate) throws IOException {
         FileOutputStream fs = new FileOutputStream(userFile, true);
-        fs.write((userID + ":" + passwd).getBytes());
+        fs.write((userID + ":" + userCertificate).getBytes());
         fs.write(System.lineSeparator().getBytes());
         System.out.println("New user " + userID + " registered successfully");
         fs.close();
@@ -87,7 +86,7 @@ public class UserHandler {
      * @return  True if the user is already registered.
      * @throws IOException  If there is an error with the BufferedReader.
      */
-    private static boolean isRegistered(String userID) throws IOException {
+    public boolean isRegistered(String userID) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(userFile));
         String line;
         while ((line = br.readLine()) != null) {
@@ -110,7 +109,7 @@ public class UserHandler {
      * @return  True if the credentials are correct.
      * @throws IOException  If there is an error with the BufferedReader.
      */
-    private static boolean checkCredentials(String userID, String passwd) throws IOException {
+    public static boolean checkCredentials(String userID, String passwd) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(userFile));
         String line;
         while ((line = br.readLine()) != null) {
@@ -122,41 +121,6 @@ public class UserHandler {
         }
         br.close();
         return false;
-    }
-
-    /**
-     * Authenticates the user.
-     * 
-     * @param username  The username of the user.
-     * @param password  The password of the user.
-     * @param inStream  The input stream of the user.
-     * @param outStream The output stream of the user.
-     * @return  The UserHandler of the user.
-     * @throws IOException  If there is an error with the streams.
-     */
-    public static UserHandler authenticate(String username, String password, ObjectInputStream inStream,
-            ObjectOutputStream outStream) throws IOException {
-
-        checkFile();
-
-        if (isRegistered(username)) {
-            outStream.writeInt(1);
-            if (checkCredentials(username, password)) {
-                outStream.writeObject(true);
-                System.out.println("User " + username + " logged in successfully! :)\n");
-                StateHandler.getInstance().addUser(username);
-                return new UserHandler(username, inStream, outStream);
-
-            } else {
-                outStream.writeObject(false);
-                throw new IOException("Wrong password for user " + username);
-            }
-        } else {
-            outStream.writeInt(0);
-            registerUser(username, password);
-            outStream.writeObject(true);
-            throw new IOException("User " + username + " registered successfully! :)\n");
-        }
     }
 
     /**
