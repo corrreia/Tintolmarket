@@ -24,6 +24,8 @@ public class OperationMenu {
     private ObjectInputStream inStream;
     private String username;
     private String operation;
+    private String keyStoreName;
+    private String keyStorePassword;
 
     /**
      * Constructor for the OperationMenu class.
@@ -32,10 +34,12 @@ public class OperationMenu {
      * @param inStream  The input stream of the user.
      * @param username  The username of the user.
      */
-    public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String username) {
+    public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String keyStoreName, String keyStorePassword, String username) {
         this.outStream = outStream;
         this.inStream = inStream;
         this.username = username;
+        this.keyStoreName = keyStoreName;
+        this.keyStorePassword = keyStorePassword;
 
         this.operation = null;
     }

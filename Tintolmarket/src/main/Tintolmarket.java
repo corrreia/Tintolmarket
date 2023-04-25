@@ -19,10 +19,11 @@ import security.ClientSecurityManager;
 public class Tintolmarket {
 
     private static final int DEFAULT_PORT = 12345;
+    private static BufferedReader stdIn;
 
     public static void main(String[] args) throws IOException {
         System.out.println("Tintolmarket Client v1.0");
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        stdIn = new BufferedReader(new InputStreamReader(System.in));
 
         try {
             String trustStore, keyStore, keyStorePassword, userID;
@@ -79,39 +80,17 @@ public class Tintolmarket {
         ObjectOutputStream outStream = new ObjectOutputStream(SSLsocket.getOutputStream());
         ObjectInputStream inStream = new ObjectInputStream(SSLsocket.getInputStream());
 
-        outStream.writeObject(clientID);
-        outStream.writeObject(password);
+        ClientSecurityManager.authenticate(outStream, inStream, keyStore, keyStorePassword, userID);
 
-        try {
-
-            int flagFromServer = inStream.readInt();
-            if (flagFromServer == 1) { // user registered
-                System.out.println("Logging in...\n");
-                boolean loginSuccessful = (Boolean) inStream.readObject();
-                if (loginSuccessful) {
-                    System.out.println("Welcome back " + clientID + " :)\n");
-                } else {
-                    System.out.println("Failed to login" + clientID + " :(\n");
-                    System.exit(1);
-                }
-            } else {
-                System.out.println("Registering new user...\n");
-                boolean registerSuccessful = (Boolean) inStream.readObject();
-                if (registerSuccessful) {
-                    startClient(serverAddress, port, clientID, password); // login after registering
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        OperationMenu menu = new OperationMenu(outStream, inStream, clientID);
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        // Operation Menu
+        OperationMenu menu = new OperationMenu(outStream, inStream, keyStore, keyStorePassword, userID);
+        menu.showMenu();
         menu.receiveOperation(stdIn);
 
+        stdIn.close();
         outStream.close();
         inStream.close();
 
-        socket.close();
+        SSLsocket.close();
     }
 }
