@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -16,6 +17,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Random;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 
 import javax.net.ssl.SSLServerSocket;
 
@@ -61,6 +64,34 @@ public class ServerSecurityManager {
         return cert.getPublicKey();
     }
 
+    public static int receiveCertificate(ObjectInputStream inStream) throws IOException, ClassNotFoundException {
+        String fileName = (String) inStream.readObject();
+		int size = (int) inStream.readObject();
+
+        String dir = CERTIFICATES_DIR + fileName;
+
+        File file = new File(dir);
+        if(file.exists()){
+            return 0;
+        }
+
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+
+        byte[] buffer = new byte[2048];
+        int bytesRead = 0;
+        int totalBytes = size;
+
+        while(totalBytes > 0){
+            bytesRead = inStream.read(buffer, 0, Math.min(buffer.length, totalBytes));
+            out.write(buffer, 0, bytesRead);
+            totalBytes -= bytesRead;
+        }
+
+        out.close();
+        file.createNewFile();
+        return 1;
+    }
+
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws IOException, InterruptedException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, CertificateException, SignatureException {
         long nonce = generateNonce();
 
@@ -77,11 +108,11 @@ public class ServerSecurityManager {
 
             if(nonce == nonceFromUser){
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
-                    outStream.writeObject(true);
+                    outStream.writeObject("login");
                     outStream.flush();
                     System.out.println("User " + userID + "authenticated\n");
                 } else {
-                    outStream.writeObject(false);
+                    outStream.writeObject("loginError");
                     outStream.flush();
                     System.out.println("User " + userID + "authentication error\n");
                 }
@@ -96,7 +127,21 @@ public class ServerSecurityManager {
             long nonceFromUser = inStream.readLong();
 
             String cert = (String) inStream.readObject();
-            receiveCertificate(inStream);
+            int i = receiveCertificate(inStream);
+
+            if(nonce == nonceFromUser){
+                if(verifyNonce(signedNonce, nonceFromUser, userID)){
+                    userHandler.registerUser(userID, cert);
+
+                    outStream.writeObject("resgistered");
+                    outStream.flush();
+                    System.out.println("User " + userID + "registered\n");
+                } else {
+                    outStream.writeObject("registrationError");
+                    outStream.flush();
+                    System.out.println("User " + userID + "registration error\n");
+                }
+            }
         }
     }
 }

@@ -23,28 +23,17 @@ public class OperationHandler {
 
     private static final String IMAGES_FROM_CLIENT = "serverWineImages";
 
-    private static OperationHandler instance;
-
     private static StateHandler stateHandler;
+
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     /**
      * Constructor for the OperationHandler class.
      */
-    public OperationHandler() {
-    }
-
-    /**
-     * Gets the instance of the OperationHandler class (Singleton).
-     * 
-     * @return The instance of the OperationHandler class.
-     */
-    public static OperationHandler getInstace() {
-        stateHandler = StateHandler.getInstance();
-
-        if (instance == null) {
-            instance = new OperationHandler();
-        }
-        return instance;
+    public OperationHandler(ObjectInputStream inStream, ObjectOutputStream outStream) {
+        this.in = inStream;
+        this.out = outStream;
     }
 
     /**
@@ -67,7 +56,7 @@ public class OperationHandler {
      * @throws IOException If there is an error with the streams.
      * @throws ClassNotFoundException if there is an error with the class.
      */
-    public void receiveAndProcessOps(String user, ObjectOutputStream out, ObjectInputStream in)
+    public void receiveAndProcessOps(String user)
             throws IOException, ClassNotFoundException {
 
         String opFromClient = (String) in.readObject();

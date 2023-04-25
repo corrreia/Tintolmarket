@@ -5,9 +5,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLServerSocket;
 
+import handlers.OperationHandler;
 import handlers.UserHandler;
 import security.ServerSecurityManager;
 import exceptions.IncorrectArgumentsServerException;
@@ -71,7 +76,6 @@ public class TintolmarketServer {
 	class ServerThread extends Thread {
 
 		private Socket socket = null;
-		private UserHandler uH = null;
 
 		ServerThread(Socket inSoc) {
 			socket = inSoc;
@@ -90,19 +94,15 @@ public class TintolmarketServer {
 
 					ServerSecurityManager.authenticate(outStream, inStream, userID);
 
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
+					OperationHandler operationHandler = new OperationHandler(inStream, outStream);
+					operationHandler.receiveAndProcessOps(userID);
 
-				if (userID != null) {
-					uH = UserHandler.authenticate(userID, inStream, outStream);
-					if (uH != null) {
-						uH.handleOps();
-					}
+					System.out.println("User " + userID + " disconnected.");
 
-				} else {
-					System.out.println("Error: userID or password is null");
-					outStream.writeObject(false);
+				} catch (ClassNotFoundException e) {
+					System.out.println("Class not found: " + e.getMessage());
+				} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | SignatureException e) {
+					System.out.println("Error authenticating user: " + e.getMessage());
 				}
 
 				outStream.close();

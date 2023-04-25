@@ -70,7 +70,7 @@ public class UserHandler {
      * @return  True if the user was registered successfully.
      * @throws IOException  If there is an error with the FileOutputStream.
      */
-    public static boolean registerUser(String userID, String userCertificate) throws IOException {
+    public boolean registerUser(String userID, String userCertificate) throws IOException {
         FileOutputStream fs = new FileOutputStream(userFile, true);
         fs.write((userID + ":" + userCertificate).getBytes());
         fs.write(System.lineSeparator().getBytes());
@@ -123,18 +123,4 @@ public class UserHandler {
         return false;
     }
 
-    /**
-     * Handles the operations of the user.
-     * 
-     * @throws IOException  If there is an error with the streams.
-     */
-    public void handleOps() throws IOException {
-
-        OperationHandler opH = OperationHandler.getInstace();
-        try {
-            opH.receiveAndProcessOps(username, outStream, inStream);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 }
