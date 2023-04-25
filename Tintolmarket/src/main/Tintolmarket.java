@@ -3,8 +3,11 @@ package main;
 import java.io.*;
 import java.net.*;
 
+import javax.net.ssl.SSLSocket;
+
 import exceptions.IncorrectParametersClientException;
 import handlers.OperationMenu;
+import security.ClientSecurityManager;
 
 /**
  * Class that represents the client of the Tintolmarket application.
@@ -22,9 +25,9 @@ public class Tintolmarket {
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            String clientID, password;
+            String trustStore, keyStore, keyStorePassword, userID;
 
-            if (args.length < 2 || args.length > 3) {
+            if (args.length > 5 || args.length < 4) {
                 stdIn.close();
                 throw new IncorrectParametersClientException();
             } else {
@@ -46,32 +49,35 @@ public class Tintolmarket {
                         System.out.println("No port number specified. Defaulting to " + DEFAULT_PORT);
                     }
 
-                    clientID = args[1];
-                    // parse password
-                    if (args.length > 2) {
-                        password = args[2];
-                    } else {
-                        System.out.print("No password specified. Please enter password: ");
-                        password = stdIn.readLine();
-                    }
+                    trustStore = args[1];
+                    keyStore = args[2];
+                    keyStorePassword = args[3];
+                    userID = args[4];
 
-                    startClient(serverAddress, port, clientID, password);
+                    if(!trustStore.contains(".truststore")) {
+						trustStore += ".truststore";
+					}
+					if(!keyStore.contains(".keystore")) {
+						keyStore += ".keystore";
+					}
+                    startClient(serverAddress, port, trustStore, keyStore, keyStorePassword, userID);
                 }
             }
 
         } catch (IncorrectParametersClientException e) {
-            System.err.println(e);
-            System.exit(1);
+            System.out.println("Failed to start client: " + e.getMessage());
+            System.out.println("Usage: Tintolmarket <server_address>:<port> <truststore> <keystore> <keystore_password> <user_id>");
+            System.out.println("Example: Tintolmarket localhost:12345 truststore keystore password1234 user1");
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static void startClient(String serverAddress, int port, String clientID, String password) throws Exception {
-        Socket socket = new Socket(serverAddress, port);
-        ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-        ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
+    private static void startClient(String serverAddress, int port, String trustStore, String keyStore, String keyStorePassword, String userID ) throws Exception {
+        SSLSocket SSLsocket = ClientSecurityManager.connect(serverAddress, port, trustStore);
+
+        ObjectOutputStream outStream = new ObjectOutputStream(SSLsocket.getOutputStream());
+        ObjectInputStream inStream = new ObjectInputStream(SSLsocket.getInputStream());
 
         outStream.writeObject(clientID);
         outStream.writeObject(password);
