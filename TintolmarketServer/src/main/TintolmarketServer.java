@@ -3,7 +3,6 @@ package main;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -13,7 +12,6 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.SSLServerSocket;
 
 import handlers.OperationHandler;
-import handlers.UserHandler;
 import security.ServerSecurityManager;
 import exceptions.IncorrectArgumentsServerException;
 /**
@@ -45,16 +43,17 @@ public class TintolmarketServer {
 	
 		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
-			System.out.println("Usage: TintolmarketServer [<port>] <password-cifra> <keystore> <password-keystore>\n");
+			System.out.println("Usage: TintolmarketServer 12345 password tintoLMarket.keystore server123\n");
 		}
 	}
 
 	public void startServer(int port, String cipherPassword, String keyStoreName, String keyStorePassword) {
-		SSLServerSocket SSLserverSocket = null;
+		SSLServerSocket SSLserverSocket = null;;
 
 		try {
 			SSLserverSocket = ServerSecurityManager.connect(port, keyStoreName, keyStorePassword);
 		} catch (IOException e) {
+			
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}

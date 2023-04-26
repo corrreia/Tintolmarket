@@ -16,13 +16,13 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.Random;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
 import javax.net.ssl.SSLServerSocket;
 
 import handlers.UserHandler;
+import security.sslserverconnection.SSLServerConnection;
 
 public class ServerSecurityManager {
 

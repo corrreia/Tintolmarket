@@ -1,4 +1,4 @@
-package security;
+package security.sslserverconnection;
 
 import java.io.File;
 import java.io.IOException;
