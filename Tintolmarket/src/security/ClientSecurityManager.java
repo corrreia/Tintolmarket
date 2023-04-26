@@ -26,7 +26,7 @@ public class ClientSecurityManager {
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
     private final static String PUB_KEYS_DIRECTORY = SECURITY_DIRECTORY + "PubKeys" + File.separator;
 
-    private static final String KEY_STORE_TYPE = "JCEKS";
+    private static final String KEY_STORE_TYPE = "JKS";
 
     public static SSLSocket connect(String serverAddress, int port, String trustStore) throws UnknownHostException, IOException {
         return SSLClientConnection.getClientSSLSocket(serverAddress, port, trustStore);

@@ -10,10 +10,9 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class SSLClientConnection {
 
-    static final String TRUST_STORE = "security" + File.separator;
-
     public static SSLSocket getClientSSLSocket(String serverAddress, int port, String trustStore) throws UnknownHostException, IOException {
-        String trustStorePath = TRUST_STORE + trustStore;
+        String trustStorePath = trustStore;
+        System.out.println("Truststore path: " + trustStorePath);
 
         System.setProperty("javax.net.ssl.trustStore", trustStorePath);
 

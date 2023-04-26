@@ -35,15 +35,11 @@ public class TintolmarketServer {
 			String keyStoreName = args[args.length - 2];
 			String keyStorePassword = args[args.length - 1];
 			
-			if(!keyStoreName.contains(".keystore")) {
-				keyStoreName += ".keystore";
-			}
-			
 			server.startServer(port, cipherPassword, keyStoreName, keyStorePassword);
 	
 		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
-			System.out.println("Usage: TintolmarketServer 12345 password tintoLMarket.keystore server123\n");
+			System.out.println("Usage: TintolmarketServer 12345 password tintolmarket password\n");
 		}
 	}
 
