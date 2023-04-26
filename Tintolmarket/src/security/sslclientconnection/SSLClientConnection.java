@@ -15,6 +15,8 @@ public class SSLClientConnection {
         System.out.println("Truststore path: " + trustStorePath);
 
         System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+
 
         SocketFactory socketFactory = SSLSocketFactory.getDefault();
         SSLSocket SSLsocket = (SSLSocket) socketFactory.createSocket(serverAddress, port);
