@@ -10,7 +10,7 @@
 			"request": "launch",
 			"mainClass": "main.TintolmarketServer",
 			"projectName": "Tintolmarket",
-			"args": "12345 password C:\\Users\\Utilizador\\Documents\\Tintolmarket\\TintolmarketServer\\security\\tintolmarketkey 123456"
+			"args": "12345 password TintolmarketServer\\keys\\ServerKey 123456"
 		},
 		{
 			"type": "java",
@@ -18,7 +18,7 @@
 			"request": "launch",
 			"mainClass": "main.Tintolmarket",
 			"projectName": "Tintolmarket",
-			"args": "localhost:12345 C:\\Users\\Utilizador\\Documents\\Tintolmarket\\truststore C:\\Users\\Utilizador\\Documents\\Tintolmarket\\Tintolmarket\\Clients\\user1\\user1key 123456 user1"
+			"args": "localhost:12345 truststore Tintolmarket\\Clients\\User1\\User1Key 123456 user1"
 		}
 	]
 }

@@ -20,6 +20,8 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLSocket;
 
+import security.sslclientconnection.SSLClientConnection;
+
 public class ClientSecurityManager {
 
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
