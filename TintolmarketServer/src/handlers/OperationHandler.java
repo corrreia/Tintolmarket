@@ -27,6 +27,7 @@ public class OperationHandler {
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    
 
     /**
      * Constructor for the OperationHandler class.
@@ -34,6 +35,7 @@ public class OperationHandler {
     public OperationHandler(ObjectInputStream inStream, ObjectOutputStream outStream) {
         this.in = inStream;
         this.out = outStream;
+        stateHandler = StateHandler.getInstance();
     }
 
     /**
