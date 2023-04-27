@@ -28,6 +28,41 @@ public class BlockchainHandler {
         this.publicKey = publicKey;
     }
 
+    public void loadBlockchain() {
+        // check if blockchain folder exists
+        File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
+        if (!blockchainFolder.exists() || !blockchainFolder.isDirectory()) {
+            return;
+        }
+
+        // get all the block files and sort them by name
+        File[] blockFiles = blockchainFolder.listFiles();
+        Arrays.sort(blockFiles, Comparator.comparing(File::getName));
+
+        // check if there are any block files
+        if (blockFiles.length == 0) {
+            return;
+        }
+
+        // load each block file
+        for (int i = 0; i < blockFiles.length; i++) {
+            // read the block file and deserialize it
+            Block block = null;
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(blockFiles[i]))) {
+                block = (Block) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            // add the block to the blockchain
+            blockchain.add(block);
+            blockCount++;
+            transactionsInBlock = block.getTransactions().size();
+            previousBlockHash = block.getBlockHash();
+        }
+    }
+
     private void addBlockToBlockchain(Block block) {
         blockchain.add(block);
         blockCount++;
@@ -99,17 +134,17 @@ public class BlockchainHandler {
         Transaction transaction = new Transaction(transactionIdCounter++, wineId, units, unitPrice, ownerId);
 
         transaction.sign(userPrivateKey);
-        byte[] signature = transaction.getSignature();
 
-        // create a new block if the current block is full
-        if (transactionsInBlock == MAX_TRANSACTIONS) {
-            Block block = new Block(blockCount + 1, previousBlockHash);
+        if (transactionsInBlock < MAX_TRANSACTIONS) {
+            // add the transaction to the current block
+            blockchain.get(blockchain.size() - 1).addTransaction(transaction);
+            transactionsInBlock++;
+        } else {
+            // create a new block and add the transaction to it
+            Block block = new Block(blockCount, previousBlockHash);
+            block.addTransaction(transaction);
+            block.signBlock(privateKey);
             addBlockToBlockchain(block);
         }
-
-        // add the transaction to the current block
-        blockchain.get(blockchain.size() - 1).addTransaction(transaction);
-        transactionsInBlock++;
     }
-
 }

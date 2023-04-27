@@ -94,7 +94,7 @@ public class Block implements Serializable {
         return "Block{" +
                 "blockNumber=" + blockNumber +
                 ", previousBlockHash='" + previousBlockHash + '\'' +
-                ", transactions=" + transactions +
+                ", transactions=" + transactions.toString() +
                 ", blockHash='" + blockHash + '\'' +
                 ", blockSignature=" + bytesToHex(blockSignature) +
                 '}';
