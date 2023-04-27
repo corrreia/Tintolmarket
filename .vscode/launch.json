@@ -6,27 +6,19 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "Tintolmarket miguel",
-			"request": "launch",
-			"mainClass": "main.Tintolmarket",
-			"projectName": "Tintolmarket_78ab6b11",
-			"args": "localhost:12345 miguel SCehfixe"
-		},
-		{
-			"type": "java",
-			"name": "Tintolmarket tomas",
-			"request": "launch",
-			"mainClass": "main.Tintolmarket",
-			"projectName": "Tintolmarket_78ab6b11",
-			"args": "localhost:12345 tomas tesla"
-		},
-		{
-			"type": "java",
 			"name": "TintolmarketServer",
 			"request": "launch",
 			"mainClass": "main.TintolmarketServer",
-			"projectName": "Tintolmarket_78ab6b11",
-			"args": ""
+			"projectName": "Tintolmarket",
+			"args": "12345 password TintolmarketServer\\security\\ServerKey 123456"
+		},
+		{
+			"type": "java",
+			"name": "Tintolmarket miguel",
+			"request": "launch",
+			"mainClass": "main.Tintolmarket",
+			"projectName": "Tintolmarket",
+			"args": "localhost:12345 truststore Tintolmarket\\Clients\\User1\\User1Key 123456 User1"
 		}
 	]
 }

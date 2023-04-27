@@ -55,12 +55,12 @@ public class Tintolmarket {
                     keyStorePassword = args[3];
                     userID = args[4];
 
-                    if(!trustStore.contains(".truststore")) {
-						trustStore += ".truststore";
-					}
-					if(!keyStore.contains(".keystore")) {
-						keyStore += ".keystore";
-					}
+                    // if(!trustStore.contains(".truststore")) {
+					// 	trustStore += ".truststore";
+					// }
+					// if(!keyStore.contains(".keystore")) {
+					// 	keyStore += ".keystore";
+					// }
                     startClient(serverAddress, port, trustStore, keyStore, keyStorePassword, userID);
                 }
             }
@@ -79,6 +79,8 @@ public class Tintolmarket {
 
         ObjectOutputStream outStream = new ObjectOutputStream(SSLsocket.getOutputStream());
         ObjectInputStream inStream = new ObjectInputStream(SSLsocket.getInputStream());
+
+        System.out.println("Connected to server " + serverAddress + ":" + port);
 
         ClientSecurityManager.authenticate(outStream, inStream, keyStore, keyStorePassword, userID);
 

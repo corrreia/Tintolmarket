@@ -3,7 +3,6 @@ package security;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -21,12 +20,13 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLSocket;
 
+import security.sslclientconnection.SSLClientConnection;
+
 public class ClientSecurityManager {
 
-    private final static String SECURITY_DIRECTORY = "security" + File.separator;
-    private final static String PUB_KEYS_DIRECTORY = SECURITY_DIRECTORY + "PubKeys" + File.separator;
+    private final static String CLIENT_KEYS = "Tintolmarket" + File.separator + "Clients" + File.separator;
 
-    private static final String KEY_STORE_TYPE = "JCEKS";
+    private static final String KEY_STORE_TYPE = "PKCS12";
 
     public static SSLSocket connect(String serverAddress, int port, String trustStore) throws UnknownHostException, IOException {
         return SSLClientConnection.getClientSSLSocket(serverAddress, port, trustStore);
@@ -61,7 +61,7 @@ public class ClientSecurityManager {
                 System.exit(-1);
             }
         } else {
-            System.out.println("User not registered. Registering new user...");
+            System.out.println("Registering...");
 
             // send signed nonce to server
             byte[] signedNonce = signNonce(nonceFromServer, keyStore, keyStorePassword, userID);
@@ -87,7 +87,7 @@ public class ClientSecurityManager {
     }
 
     private static void sendCertificateToServer(ObjectOutputStream outStream, String userID) throws IOException {
-        String path = PUB_KEYS_DIRECTORY + userID + "RSApub.cer";
+        String path = CLIENT_KEYS + userID + File.separator + getCertificateFormat(userID);
         File file = new File(path);
 
         InputStream is = new BufferedInputStream(new FileInputStream(file));
@@ -95,7 +95,7 @@ public class ClientSecurityManager {
         int size = (int) file.length();
 
         outStream.writeObject(fileName);
-        outStream.writeInt(size);
+        outStream.writeObject(size);
 
         byte[] buffer = new byte[2048];
         int bytesRead;
@@ -108,24 +108,24 @@ public class ClientSecurityManager {
     }
 
     private static String getCertificateFormat(String userID) {
-        return userID + "RSApub.cer";
+        return userID + ".cer";
     }
 
     private static byte[] signNonce(long nonceFromServer, String keyStore, String keyStorePassword, String userID) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException {
-        String alias = userID + "KeyRSA";
+        String alias = userID;
         PrivateKey privKey = getPrivateKey(keyStore, keyStorePassword, alias);
 
         Signature signature = Signature.getInstance("MD5withRSA");
         signature.initSign(privKey);
 
+
         byte[] nonceBytes = Long.toString(nonceFromServer).getBytes();
         signature.update(nonceBytes);
-
         return signature.sign();
     }
 
     private static PrivateKey getPrivateKey(String keyStore, String keyStorePassword, String alias) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
-        FileInputStream fis = new FileInputStream(SECURITY_DIRECTORY + keyStore);
+        FileInputStream fis = new FileInputStream(keyStore);
         KeyStore ks = KeyStore.getInstance(KEY_STORE_TYPE);
         ks.load(fis, keyStorePassword.toCharArray());
 

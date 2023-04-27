@@ -16,20 +16,20 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.Random;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
 import javax.net.ssl.SSLServerSocket;
 
 import handlers.UserHandler;
+import security.sslserverconnection.SSLServerConnection;
 
 public class ServerSecurityManager {
 
-    private final static String SECURITY_DIR = "security" + File.separator;
-    public final static String CERTIFICATES_DIR = SECURITY_DIR + "certificates" + File.separator;
-
+    private final static String SECURITY_DIRECTORY = "security" + File.separator;
+	public final static String CERTIFICATES_DIRECTORY = SECURITY_DIRECTORY + "certificates" + File.separator;
     private final static String CERTIFICATE_FORMAT = "RSApub.cer";
+
 
     private static long generateNonce() {
         SecureRandom random = new SecureRandom();
@@ -41,7 +41,7 @@ public class ServerSecurityManager {
     }
 
     public static boolean verifyNonce(byte[] signedNonce, long nonceFromUser, String userID) throws NoSuchAlgorithmException, FileNotFoundException, CertificateException, InvalidKeyException, SignatureException {
-        PublicKey pubK = getPubKFromCertificate(userID);
+        PublicKey pubK = getPublicKeyFromCertificate(userID);
         
         Signature signature = Signature.getInstance("MD5withRSA");
         signature.initVerify(pubK);
@@ -49,48 +49,55 @@ public class ServerSecurityManager {
         return signature.verify(signedNonce);
     }
 
-    public static PublicKey getPubKFromCertificate(String userID) throws FileNotFoundException, CertificateException {
-        String path;
+    private static PublicKey getPublicKeyFromCertificate(String certificateName) 
+			throws CertificateException, FileNotFoundException {
 
-        if(userID.contains(".cer")){
-            path = CERTIFICATES_DIR + userID;
-        } else {
-            path = CERTIFICATES_DIR + userID + File.separator + CERTIFICATE_FORMAT;
-        }
+		String certificatePath;
 
-        FileInputStream fis = new FileInputStream(path);
-        CertificateFactory cf = CertificateFactory.getInstance("X509");
-        Certificate cert = cf.generateCertificate(fis);
-        return cert.getPublicKey();
-    }
+		if(certificateName.contains(".cer")) {
+			certificatePath = "TintolmarketServer" + File.separator + CERTIFICATES_DIRECTORY + certificateName;
+		}
+		else {
+			String userId = certificateName;
+			certificatePath = "TintolmarketServer" + File.separator + CERTIFICATES_DIRECTORY + userId + ".cer";			
+		}
 
-    public static int receiveCertificate(ObjectInputStream inStream) throws IOException, ClassNotFoundException {
-        String fileName = (String) inStream.readObject();
-		int size = (int) inStream.readObject();
+		FileInputStream fis = new FileInputStream(certificatePath);
+		CertificateFactory certificateFactory = CertificateFactory.getInstance("X509");
+		Certificate certificate = certificateFactory.generateCertificate(fis);
+		return certificate.getPublicKey();
+	}
 
-        String dir = CERTIFICATES_DIR + fileName;
+    public static int serverReceiveCertificate(ObjectInputStream in) 
+			throws ClassNotFoundException, IOException {
 
-        File file = new File(dir);
-        if(file.exists()){
-            return 0;
-        }
+		String fileName = (String) in.readObject();
+		int fileSize = (int) in.readObject();
 
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		String dest = "TintolmarketServer" + File.separator + CERTIFICATES_DIRECTORY + fileName; 		
 
-        byte[] buffer = new byte[2048];
-        int bytesRead = 0;
-        int totalBytes = size;
+		File file = new File(dest);
+		if(file.exists()) {
+			return 0;
+		}
 
-        while(totalBytes > 0){
-            bytesRead = inStream.read(buffer, 0, Math.min(buffer.length, totalBytes));
-            out.write(buffer, 0, bytesRead);
-            totalBytes -= bytesRead;
-        }
+		OutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
 
-        out.close();
-        file.createNewFile();
-        return 1;
-    }
+		byte [] buffer = new byte[2048];
+		int nbytes = 0;
+		int temp = fileSize;
+
+		while(temp > 0) {
+			nbytes = in.read(buffer, 0 , temp > 2048 ? 2048 : temp);
+			bos.write(buffer, 0, nbytes);
+			temp -= nbytes;
+		}  
+
+		bos.close();
+		file.createNewFile();
+
+		return 1;
+	}
 
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws IOException, InterruptedException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, CertificateException, SignatureException {
         long nonce = generateNonce();
@@ -99,7 +106,7 @@ public class ServerSecurityManager {
 
         if(userHandler.isRegistered(userID)){
             outStream.writeLong(nonce);
-            outStream.writeInt(1); // user registered
+            outStream.writeInt(1); 
             outStream.flush();
 
             Thread.sleep(100);
@@ -127,7 +134,8 @@ public class ServerSecurityManager {
             long nonceFromUser = inStream.readLong();
 
             String cert = (String) inStream.readObject();
-            int i = receiveCertificate(inStream);
+            int i = serverReceiveCertificate(inStream);
+            System.out.println("Certificate received from user " + userID + "\n");
 
             if(nonce == nonceFromUser){
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
