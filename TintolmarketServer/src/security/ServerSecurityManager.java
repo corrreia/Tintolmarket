@@ -28,7 +28,6 @@ public class ServerSecurityManager {
 
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
 	public final static String CERTIFICATES_DIRECTORY = SECURITY_DIRECTORY + "certificates" + File.separator;
-    private final static String CERTIFICATE_FORMAT = "RSApub.cer";
 
 
     private static long generateNonce() {
@@ -102,7 +101,7 @@ public class ServerSecurityManager {
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws IOException, InterruptedException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, CertificateException, SignatureException {
         long nonce = generateNonce();
 
-        UserHandler userHandler = new UserHandler(userID, inStream, outStream);
+        UserHandler userHandler = new UserHandler();
 
         if(userHandler.isRegistered(userID)){
             outStream.writeLong(nonce);
@@ -117,11 +116,11 @@ public class ServerSecurityManager {
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
                     outStream.writeObject("login");
                     outStream.flush();
-                    System.out.println("User " + userID + "authenticated\n");
+                    System.out.println("User " + userID + " authenticated\n");
                 } else {
                     outStream.writeObject("loginError");
                     outStream.flush();
-                    System.out.println("User " + userID + "authentication error\n");
+                    System.out.println("User " + userID + " authentication error\n");
                 }
             }
         } else {
@@ -139,15 +138,15 @@ public class ServerSecurityManager {
 
             if(nonce == nonceFromUser){
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
-                    userHandler.registerUser(userID, cert);
+                    userHandler.registerUser(userID);
 
                     outStream.writeObject("resgistered");
                     outStream.flush();
-                    System.out.println("User " + userID + "registered\n");
+                    System.out.println("User " + userID + " registered\n");
                 } else {
                     outStream.writeObject("registrationError");
                     outStream.flush();
-                    System.out.println("User " + userID + "registration error\n");
+                    System.out.println("User " + userID + " registration error\n");
                 }
             }
         }
