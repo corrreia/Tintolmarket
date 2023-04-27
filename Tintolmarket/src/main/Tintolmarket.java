@@ -55,12 +55,6 @@ public class Tintolmarket {
                     keyStorePassword = args[3];
                     userID = args[4];
 
-                    // if(!trustStore.contains(".truststore")) {
-					// 	trustStore += ".truststore";
-					// }
-					// if(!keyStore.contains(".keystore")) {
-					// 	keyStore += ".keystore";
-					// }
                     startClient(serverAddress, port, trustStore, keyStore, keyStorePassword, userID);
                 }
             }

@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 
 import javax.net.ssl.SSLServerSocket;
 
+import handlers.FileHandlerServer;
 import handlers.UserHandler;
 import security.sslserverconnection.SSLServerConnection;
 
@@ -133,12 +134,14 @@ public class ServerSecurityManager {
             long nonceFromUser = inStream.readLong();
 
             String cert = (String) inStream.readObject();
-            int i = serverReceiveCertificate(inStream);
+            serverReceiveCertificate(inStream);
             System.out.println("Certificate received from user " + userID + "\n");
 
             if(nonce == nonceFromUser){
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
                     userHandler.registerUser(userID);
+
+                    //FileHandlerServer.setupClientDirectory(userID);
 
                     outStream.writeObject("resgistered");
                     outStream.flush();

@@ -40,7 +40,7 @@ public class TintolmarketServer {
 	
 		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
-			System.out.println("Usage: TintolmarketServer 12345 password tintolmarket password\n");
+			System.out.println("Usage: TintolmarketServer 12345 password ServerKey 123456\n");
 		}
 	}
 
@@ -88,7 +88,6 @@ public class TintolmarketServer {
 					System.out.println("userID received\n");
 
 					ServerSecurityManager.authenticate(outStream, inStream, userID);
-
 					OperationHandler operationHandler = new OperationHandler(inStream, outStream);
 					operationHandler.receiveAndProcessOps(userID);
 

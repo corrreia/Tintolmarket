@@ -57,10 +57,12 @@ public class OperationHandler {
      * @param in The input stream of the client.
      * @throws IOException If there is an error with the streams.
      * @throws ClassNotFoundException if there is an error with the class.
+     * @throws InterruptedException
      */
     public void receiveAndProcessOps(String user)
-            throws IOException, ClassNotFoundException {
-
+            throws IOException, ClassNotFoundException, InterruptedException {
+        
+        System.out.println("Waiting for operation from client...");
         String opFromClient = (String) in.readObject();
 
         String[] args = opFromClient.trim().split(" ");
