@@ -22,21 +22,15 @@ import java.io.ObjectOutputStream;
  */
 public class UserHandler {
 
-    private static final String FILE_NAME = "credentials.txt";
-    private static File userFile;
+    private static final String FILE_NAME = "users.txt";
+	
+	private File file;
 
-    /**
-     * Constructor for the UserHandler class.
-     * 
-     * @param username The username of the user.
-     * @param inStream The input stream of the user.
-     * @param outStream The output stream of the user.
-     * @throws IOException  If there is an error with the streams.
-     */
-    public UserHandler() throws IOException {
-        this.userFile = new File(FILE_NAME);
-        checkFile();
-    }
+	public UserHandler() throws IOException {
+		this.file = new File(FILE_NAME);
+		checkFile();		
+        StateHandler.getInstance();
+	}
 
     /**
 	 * Checks if the file "credentials.txt" exists.
@@ -44,9 +38,9 @@ public class UserHandler {
      * 
 	 * @throws IOException  If there is an error with the file.
 	 */
-    private static void checkFile() throws IOException {
-        if (!userFile.exists()) {
-            userFile.createNewFile();
+    private void checkFile() throws IOException {
+        if (!file.exists()) {
+            file.createNewFile();
         }
     }
 
@@ -59,9 +53,9 @@ public class UserHandler {
      * @return  True if the user was registered successfully.
      * @throws IOException  If there is an error with the FileOutputStream.
      */
-    public boolean registerUser(String userID, String userCertificate) throws IOException {
-        FileOutputStream fs = new FileOutputStream(userFile, true);
-        fs.write((userID + ":" + userCertificate).getBytes());
+    public boolean registerUser(String userID) throws IOException {
+        FileOutputStream fs = new FileOutputStream(file, true);
+        fs.write((userID).getBytes());
         fs.write(System.lineSeparator().getBytes());
         StateHandler.getInstance().addUser(userID);
         System.out.println("New user " + userID + " registered successfully");
@@ -77,12 +71,10 @@ public class UserHandler {
      * @throws IOException  If there is an error with the BufferedReader.
      */
     public boolean isRegistered(String userID) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(userFile));
+        BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {
-            String[] user = line.split(":");
-            if (user[0].equals(userID)) {
-                System.out.println("User " + userID + " is already registered");
+            if (line.equals(userID)) {
                 br.close();
                 return true;
             }
@@ -90,27 +82,4 @@ public class UserHandler {
         br.close();
         return false;
     }
-
-    /**
-     * Checks if the credentials of the user are correct.
-     * 
-     * @param userID    The username of the user.
-     * @param passwd    The password of the user.
-     * @return  True if the credentials are correct.
-     * @throws IOException  If there is an error with the BufferedReader.
-     */
-    public static boolean checkCredentials(String userID, String passwd) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(userFile));
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] user = line.split(":");
-            if (user[0].equals(userID) && user[1].equals(passwd)) {
-                br.close();
-                return true;
-            }
-        }
-        br.close();
-        return false;
-    }
-
 }

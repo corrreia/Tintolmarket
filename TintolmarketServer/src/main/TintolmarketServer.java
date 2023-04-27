@@ -12,6 +12,7 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.SSLServerSocket;
 
 import handlers.OperationHandler;
+import handlers.UserHandler;
 import security.ServerSecurityManager;
 import exceptions.IncorrectArgumentsServerException;
 /**
@@ -80,7 +81,6 @@ public class TintolmarketServer {
 			try {
 				ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
 				ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-
 
 				Thread.sleep(100);
 				try {

@@ -468,7 +468,7 @@ public class OperationMenu {
                     break;
             }
 
-            if (!command.equals("quit") && !command.equals("q")) {
+            if (!command.equals("quit") && !command.equals("q") && !op.equals(null)) {
                 System.out.print("Enter an operation: ");
                 op = in.readLine();
 

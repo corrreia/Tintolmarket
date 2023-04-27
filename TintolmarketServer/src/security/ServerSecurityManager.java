@@ -138,7 +138,7 @@ public class ServerSecurityManager {
 
             if(nonce == nonceFromUser){
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
-                    userHandler.registerUser(userID, cert);
+                    userHandler.registerUser(userID);
 
                     outStream.writeObject("resgistered");
                     outStream.flush();

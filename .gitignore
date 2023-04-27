@@ -1,6 +1,6 @@
 *.class
 *.jar
-credentials.txt
+users.txt
 *.ser
 *.jpg
 /bin/
