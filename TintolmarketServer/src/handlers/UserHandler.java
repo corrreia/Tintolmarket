@@ -22,10 +22,6 @@ import java.io.ObjectOutputStream;
  */
 public class UserHandler {
 
-    private ObjectOutputStream outStream = null;
-    private ObjectInputStream inStream = null;
-    private String username = null;
-
     private static final String FILE_NAME = "credentials.txt";
     private static File userFile;
 
@@ -37,10 +33,8 @@ public class UserHandler {
      * @param outStream The output stream of the user.
      * @throws IOException  If there is an error with the streams.
      */
-    public UserHandler(String username, ObjectInputStream inStream, ObjectOutputStream outStream) throws IOException {
-        this.outStream = outStream;
-        this.inStream = inStream;
-        this.username = username;
+    public UserHandler() throws IOException {
+        this.userFile = new File(FILE_NAME);
         checkFile();
     }
 
@@ -51,14 +45,9 @@ public class UserHandler {
 	 * @throws IOException  If there is an error with the file.
 	 */
     private static void checkFile() throws IOException {
-        userFile = new File(FILE_NAME);
         if (!userFile.exists()) {
-            if (!userFile.createNewFile()) {
-                throw new IOException("Could not create file " + userFile.getAbsolutePath());
-            }
-            System.out.println("user:password file created successfully");
-        } else
-            System.out.println("Using existing user:password file");
+            userFile.createNewFile();
+        }
     }
 
     /**
@@ -74,6 +63,7 @@ public class UserHandler {
         FileOutputStream fs = new FileOutputStream(userFile, true);
         fs.write((userID + ":" + userCertificate).getBytes());
         fs.write(System.lineSeparator().getBytes());
+        StateHandler.getInstance().addUser(userID);
         System.out.println("New user " + userID + " registered successfully");
         fs.close();
         return true;

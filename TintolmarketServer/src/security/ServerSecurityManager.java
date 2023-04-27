@@ -28,7 +28,6 @@ public class ServerSecurityManager {
 
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
 	public final static String CERTIFICATES_DIRECTORY = SECURITY_DIRECTORY + "certificates" + File.separator;
-    private final static String CERTIFICATE_FORMAT = "RSApub.cer";
 
 
     private static long generateNonce() {
@@ -102,7 +101,7 @@ public class ServerSecurityManager {
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws IOException, InterruptedException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, CertificateException, SignatureException {
         long nonce = generateNonce();
 
-        UserHandler userHandler = new UserHandler(userID, inStream, outStream);
+        UserHandler userHandler = new UserHandler();
 
         if(userHandler.isRegistered(userID)){
             outStream.writeLong(nonce);
