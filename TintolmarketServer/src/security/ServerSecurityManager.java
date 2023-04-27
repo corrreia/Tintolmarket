@@ -117,11 +117,11 @@ public class ServerSecurityManager {
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
                     outStream.writeObject("login");
                     outStream.flush();
-                    System.out.println("User " + userID + "authenticated\n");
+                    System.out.println("User " + userID + " authenticated\n");
                 } else {
                     outStream.writeObject("loginError");
                     outStream.flush();
-                    System.out.println("User " + userID + "authentication error\n");
+                    System.out.println("User " + userID + " authentication error\n");
                 }
             }
         } else {
@@ -143,11 +143,11 @@ public class ServerSecurityManager {
 
                     outStream.writeObject("resgistered");
                     outStream.flush();
-                    System.out.println("User " + userID + "registered\n");
+                    System.out.println("User " + userID + " registered\n");
                 } else {
                     outStream.writeObject("registrationError");
                     outStream.flush();
-                    System.out.println("User " + userID + "registration error\n");
+                    System.out.println("User " + userID + " registration error\n");
                 }
             }
         }
