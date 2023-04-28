@@ -92,6 +92,19 @@ public class BlockchainHandler {
         System.out.println("Block count: " + blockCount);
         System.out.println("Transactions in block: " + transactionsInBlock);
         System.out.println("Previous block hash: " + previousBlockHash);
+
+        System.out.println("Blockchain: " + listBlockchain());
+    }
+
+    public String listBlockchain() {
+        StringBuilder sb = new StringBuilder();
+        for (Block block : blockchain) {
+            for (Transaction transaction : block.getTransactions()) {
+                sb.append(transaction.toString());
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 
     private void addBlockToBlockchain(Block block) {

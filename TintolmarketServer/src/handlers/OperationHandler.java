@@ -116,8 +116,8 @@ public class OperationHandler {
                     int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
                     out.writeInt(returnCode);
                     out.flush();
-                    
-                    if(returnCode == 0) {
+
+                    if (returnCode == 0) {
                         Transaction transaction = (Transaction) in.readObject();
                         PublicKey pubKey = null;
                         try {
@@ -218,6 +218,13 @@ public class OperationHandler {
                     System.out.println("Reading messages");
                     List<String> messages = stateHandler.read(user);
                     out.writeObject(messages);
+                    out.flush();
+                    break;
+                case "list":
+                case "l":
+                    System.out.println("Listing wines");
+                    String wines = BlockchainHandler.getInstance().listBlockchain();
+                    out.writeObject(wines);
                     out.flush();
                     break;
             }

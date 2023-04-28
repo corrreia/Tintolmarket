@@ -321,6 +321,20 @@ public class OperationMenu {
         System.out.println("\n------------------------------------------------\n");
     }
 
+    private void list() throws IOException, ClassNotFoundException {
+        operation = "list";
+        outStream.writeObject(operation);
+        outStream.flush();
+
+        @SuppressWarnings("unchecked")
+        String wines = (String) inStream.readObject();
+
+        System.out.println("\n-------------Transations-------------\n");
+        System.out.println(wines);
+        System.out.println("\n-------------------------------------\n");
+
+    }
+
     /**
      * Method to handle incorrect operations.
      */
@@ -466,6 +480,15 @@ public class OperationMenu {
                     } else {
                         incorrectOperation();
                         System.out.println("Hint: read or r");
+                    }
+                    break;
+                case "list":
+                case "l":
+                    if (opSplit.length == 1) {
+                        list();
+                    } else {
+                        incorrectOperation();
+                        System.out.println("Hint: list or l");
                     }
                     break;
                 case "help":
