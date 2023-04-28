@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
  * Class that handles the users of the server.
@@ -22,26 +20,16 @@ import java.io.ObjectOutputStream;
  */
 public class UserHandler {
 
-    private static final String FILE_NAME = "users.txt";
+    private static final String FILE_NAME = "users.cif";
 	
 	private File file;
 
-	public UserHandler() throws IOException {
-		this.file = new File(FILE_NAME);
-		checkFile();		
-        StateHandler.getInstance();
-	}
+    public UserHandler() throws IOException {
+        this.file = new File(FILE_NAME);
+    }
 
-    /**
-	 * Checks if the file "credentials.txt" exists.
-     * If it doesn't exist, it creates it.
-     * 
-	 * @throws IOException  If there is an error with the file.
-	 */
-    private void checkFile() throws IOException {
-        if (!file.exists()) {
-            file.createNewFile();
-        }
+    public File getFile() {
+        return file;
     }
 
     /**
@@ -49,13 +37,14 @@ public class UserHandler {
      * Format: username:password
      * 
      * @param userID    The username of the user.
+     * @param cert
      * @param passwd    The password of the user.
      * @return  True if the user was registered successfully.
      * @throws IOException  If there is an error with the FileOutputStream.
      */
-    public boolean registerUser(String userID) throws IOException {
+    public boolean registerUser(String userID, String cert) throws IOException {
         FileOutputStream fs = new FileOutputStream(file, true);
-        fs.write((userID).getBytes());
+        fs.write((userID + ":" + cert).getBytes());
         fs.write(System.lineSeparator().getBytes());
         StateHandler.getInstance().addUser(userID);
         System.out.println("New user " + userID + " registered successfully");
@@ -74,7 +63,9 @@ public class UserHandler {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {
-            if (line.equals(userID)) {
+            String[] user = line.split(":");
+            if (user[0].equals(userID)) {
+                System.out.println("User " + userID + " is already registered");
                 br.close();
                 return true;
             }
@@ -82,4 +73,6 @@ public class UserHandler {
         br.close();
         return false;
     }
+
+    
 }

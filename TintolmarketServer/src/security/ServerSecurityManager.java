@@ -30,6 +30,10 @@ public class ServerSecurityManager {
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
 	public final static String CERTIFICATES_DIRECTORY = SECURITY_DIRECTORY + "certificates" + File.separator;
 
+    private static final int ITERATIONS = 20;
+    private static final String CIPHER_ALGORITHM = "PBEWithHmacSHA256AndAES_128";
+    private static final String KEY_ALGORITHM = "PBEWithHmacSHA256AndAES_128";
+
 
     private static long generateNonce() {
         SecureRandom random = new SecureRandom();
@@ -99,11 +103,13 @@ public class ServerSecurityManager {
 		return 1;
 	}
 
-    public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws IOException, InterruptedException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, CertificateException, SignatureException {
+    public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws Exception {
         long nonce = generateNonce();
 
         UserHandler userHandler = new UserHandler();
+        FileHandlerServer fileHandler = FileHandlerServer.getInstance();
 
+        // fileHandler.decrypt();
         if(userHandler.isRegistered(userID)){
             outStream.writeLong(nonce);
             outStream.writeInt(1); 
@@ -139,7 +145,7 @@ public class ServerSecurityManager {
 
             if(nonce == nonceFromUser){
                 if(verifyNonce(signedNonce, nonceFromUser, userID)){
-                    userHandler.registerUser(userID);
+                    userHandler.registerUser(userID, cert);
 
                     //FileHandlerServer.setupClientDirectory(userID);
 
@@ -153,5 +159,6 @@ public class ServerSecurityManager {
                 }
             }
         }
+        // fileHandler.encrypt();
     }
 }

@@ -70,7 +70,7 @@ public class ClientSecurityManager {
             outStream.writeLong(nonceFromServer);
 
             String certificate = getCertificateFormat(userID);
-            outStream.writeObject(certificate);
+            outStream.writeObject(CLIENT_KEYS + userID + File.separator + certificate);
 
             sendCertificateToServer(outStream, userID);
             outStream.flush();
