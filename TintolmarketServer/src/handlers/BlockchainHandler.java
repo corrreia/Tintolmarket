@@ -81,7 +81,7 @@ public class BlockchainHandler {
         // check if blockchain folder exists
         File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
         if (!blockchainFolder.exists() || !blockchainFolder.isDirectory()) {
-            System.out.println("Blockchain folder does not exist.");
+            blockchainFolder.mkdir();
             return;
         }
 
