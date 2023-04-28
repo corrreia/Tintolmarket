@@ -24,6 +24,13 @@ import javax.net.ssl.SSLSocket;
 
 import security.sslclientconnection.SSLClientConnection;
 
+/**
+ * Class that handles the security of the client.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
+ */
 public class ClientSecurityManager {
 
     private final static String CLIENT_KEYS = "Clients" + File.separator;
@@ -33,19 +40,45 @@ public class ClientSecurityManager {
     private static PrivateKey serverPrivateKey;
     private static PublicKey serverPublicKey;
 
+    /**
+     * Method that gets a private key.
+     * @return  The private key.
+     */
     public static PrivateKey getPrivateKey() {
         return serverPrivateKey;
     }
 
+    /**
+     * Method that gets a public key.
+     * @return  The public key.
+     */
     public static PublicKey getPublicKey() {
         return serverPublicKey;
     }
 
+    /**
+     * Method that connects to the server.
+     * @param serverAddress    Address of the server.
+     * @param port           Port of the server.
+     * @param trustStore    Truststore of the server.
+     * @return            The socket of the connection.
+     * @throws UnknownHostException
+     * @throws IOException
+     */
     public static SSLSocket connect(String serverAddress, int port, String trustStore)
             throws UnknownHostException, IOException {
         return SSLClientConnection.getClientSSLSocket(serverAddress, port, trustStore);
     }
 
+    /**
+     * Method that loads a keystore.
+     *  
+     * @param keystorePath    Path of the keystore.
+     * @param keystorePassword  Password of the keystore.
+     * @param alias        Alias of the keystore.
+     * @param keyPassword   Password of the key.
+     * @throws Exception
+     */
     public static void loadKeystore(String keystorePath, String keystorePassword, String alias, String keyPassword)
             throws Exception {
         FileInputStream fis = new FileInputStream(keystorePath);
@@ -62,6 +95,22 @@ public class ClientSecurityManager {
         serverPublicKey = privateKeyEntry.getCertificate().getPublicKey();
     }
 
+    /**
+     * Method that authenticates a user
+     * @param outStream     Output stream of the socket.
+     * @param inStream    Input stream of the socket.
+     * @param keyStore  Keystore of the user.
+     * @param keyStorePassword  Password of the keystore.
+     * @param userID    ID of the user.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InvalidKeyException
+     * @throws UnrecoverableKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws SignatureException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     */
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String keyStore,
             String keyStorePassword, String userID)
             throws IOException, ClassNotFoundException, InvalidKeyException, UnrecoverableKeyException,

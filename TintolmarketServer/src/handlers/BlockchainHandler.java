@@ -241,5 +241,4 @@ public class BlockchainHandler {
             addTransaction(transaction, signature, userPublicKey);
         }
     }
-
 }
