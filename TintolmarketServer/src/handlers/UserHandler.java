@@ -20,16 +20,12 @@ import java.io.IOException;
  */
 public class UserHandler {
 
-    private static final String FILE_NAME = "users.cif";
+    private static final String FILE_NAME = "users.txt";
 	
 	private File file;
 
     public UserHandler() throws IOException {
         this.file = new File(FILE_NAME);
-    }
-
-    public File getFile() {
-        return file;
     }
 
     /**
@@ -40,15 +36,20 @@ public class UserHandler {
      * @param cert
      * @param passwd    The password of the user.
      * @return  True if the user was registered successfully.
-     * @throws IOException  If there is an error with the FileOutputStream.
+     * @throws Exception
      */
-    public boolean registerUser(String userID, String cert) throws IOException {
+    public boolean registerUser(String userID, String cert) throws Exception {
+        FileHandlerServer fH = FileHandlerServer.getInstance();
+        fH.decrypt();
+        System.out.println(file.exists());
         FileOutputStream fs = new FileOutputStream(file, true);
         fs.write((userID + ":" + cert).getBytes());
         fs.write(System.lineSeparator().getBytes());
         StateHandler.getInstance().addUser(userID);
         System.out.println("New user " + userID + " registered successfully");
         fs.close();
+        fH.encrypt();
+        System.out.println(file.exists());
         return true;
     }
 
@@ -57,9 +58,12 @@ public class UserHandler {
      * 
      * @param userID    The username of the user.
      * @return  True if the user is already registered.
-     * @throws IOException  If there is an error with the BufferedReader.
+     * @throws Exception
      */
-    public boolean isRegistered(String userID) throws IOException {
+    public boolean isRegistered(String userID) throws Exception {
+        FileHandlerServer fH = FileHandlerServer.getInstance();
+        fH.decrypt();
+        System.out.println(file.exists());
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {
@@ -67,6 +71,7 @@ public class UserHandler {
             if (user[0].equals(userID)) {
                 System.out.println("User " + userID + " is already registered");
                 br.close();
+                fH.encrypt();
                 return true;
             }
         }

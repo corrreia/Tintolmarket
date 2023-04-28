@@ -3,6 +3,8 @@ package ciphers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -12,63 +14,102 @@ import java.security.Policy.Parameters;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CipherModes {
 
     private static final String PARAMS = "cipher.params";
+    static final String CIPHER_KEY = "cipher.key";
 
-    public static void encrypt(File inputFile, String cipherKeyPath) throws Exception {
-        // Read the secret key from the file
-        byte[] keyBytes = Files.readAllBytes(Paths.get(cipherKeyPath));
-        SecretKey key = new SecretKeySpec(keyBytes, "AES");
-    
-        // Initialize the cipher with the secret key
-        Cipher c = Cipher.getInstance("PBEWithHmacSHA256AndAES_128");
+    private static final String ALGORITHM = "PBEWithHmacSHA256AndAES_128";
+
+    public static void encrypt(File inputFile, String password) throws Exception {
+        File f = new File(inputFile.getAbsolutePath());
+        if (!f.exists()) {
+            f.createNewFile();
+        }
+
+        // genrateKey
+        byte[] salt = { (byte) 0xc9, (byte) 0x36, (byte) 0x78, (byte) 0x99, (byte) 0x52, (byte) 0x3e,
+                (byte) 0xea,
+                (byte) 0xf2 };
+        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 20); // pass, salt, iterations
+        SecretKeyFactory kf = SecretKeyFactory.getInstance(ALGORITHM);
+        SecretKey key = kf.generateSecret(keySpec);
+        // encrypt
+
+        Cipher c = Cipher.getInstance(ALGORITHM);
         c.init(Cipher.ENCRYPT_MODE, key);
-    
-        // Write the cipher parameters to a file for later use
-        byte[] params = c.getParameters().getEncoded();
-        FileOutputStream paramsOutputStream = new FileOutputStream(PARAMS);
-        paramsOutputStream.write(params);
-        paramsOutputStream.close();
-    
-        // Read the input file into a byte array
-        byte[] inputBytes = Files.readAllBytes(inputFile.toPath());
-    
-        // Encrypt the input file and write the encrypted data to a new file
-        byte[] encryptedBytes = c.doFinal(inputBytes);
-        File encryptedFile = new File(inputFile.getParent(), inputFile.getName() + ".enc");
-        FileOutputStream outputStream = new FileOutputStream(encryptedFile);
-        outputStream.write(encryptedBytes);
-        outputStream.close();
+
+        FileInputStream fis = new FileInputStream(inputFile);
+        FileOutputStream fos = new FileOutputStream( "users.cif");
+        CipherOutputStream cos = new CipherOutputStream(fos, c);
+
+        byte[] b = new byte[16];
+        int i = fis.read(b);
+        while (i != -1) {
+            cos.write(b, 0, i);
+            i = fis.read(b);
+        }
+        byte[] keyEncoded = key.getEncoded();
+        FileOutputStream kos = new FileOutputStream(CIPHER_KEY);
+        ObjectOutputStream oos = new ObjectOutputStream(kos);
+        oos.writeObject(keyEncoded);
+        kos = new FileOutputStream(PARAMS);
+        oos = new ObjectOutputStream(kos);
+        oos.writeObject(c.getParameters().getEncoded());
+
+        oos.close();
+        kos.close();
+        fis.close();
+        cos.close();
+        Files.delete(Paths.get(inputFile.getAbsolutePath()));
     }
     
     
-    public static void decrypt(File inputFile, String cipherKeyPath) throws Exception {
-        byte[] keyBytes = Files.readAllBytes(Paths.get(cipherKeyPath));
-        SecretKey key = new SecretKeySpec(keyBytes, "AES");
+    public static void decrypt(File inputFile) throws Exception {
+        File file1 = new File(CIPHER_KEY);
+        File file2 = new File("users.cif");
+        File file3 = new File(PARAMS);
+        if (!file1.exists() || !file2.exists() || !file3.exists()) {
+            File f = new File(inputFile.getAbsolutePath());
+            f.createNewFile();
+            return;
+        }
 
-        byte[] params = Files.readAllBytes(new File(PARAMS).toPath());
-        AlgorithmParameters p = AlgorithmParameters.getInstance("PBEWithHmacSHA256AndAES_128");
-        p.init(params);
-        Cipher d = Cipher.getInstance("PBEWithHmacSHA256AndAES_128");
-        d.init(Cipher.DECRYPT_MODE, key, p);
+        FileInputStream kos = new FileInputStream(CIPHER_KEY);
+        ObjectInputStream oos = new ObjectInputStream(kos);
+        byte[] keyEncoded2 = (byte[]) oos.readObject();
+        oos.close();
+        kos.close();
 
-         
-        // Decrypt the encrypted data and write it to a new file
-        byte[] encryptedBytes = Files.readAllBytes(inputFile.toPath());
-        byte[] decryptedBytes = d.doFinal(encryptedBytes);
-        File decryptedFile = new File(inputFile.getParent(), inputFile.getName().replace(".enc", ""));
-        FileOutputStream outputStream = new FileOutputStream(decryptedFile);
-        outputStream.write(decryptedBytes);
-        outputStream.close();
+        SecretKeySpec keySpec2 = new SecretKeySpec(keyEncoded2, ALGORITHM);
 
+        AlgorithmParameters p = AlgorithmParameters.getInstance(ALGORITHM);
+        FileInputStream in = new FileInputStream(PARAMS);
+        ObjectInputStream oin = new ObjectInputStream(in);
+        byte[] param = (byte[]) oin.readObject();
+        p.init(param);
+        Cipher c = Cipher.getInstance("PBEWithHmacSHA256AndAES_128");
+        c.init(Cipher.DECRYPT_MODE, keySpec2, p);
+        FileOutputStream fis = new FileOutputStream(inputFile.getAbsolutePath());
+        FileInputStream fos = new FileInputStream("users.cif");
+        CipherInputStream cos = new CipherInputStream(fos, c);
+
+        byte[] b = new byte[16];
+        int i = cos.read(b);
+        while (i != -1) {
+            fis.write(b, 0, i);
+            i = cos.read(b);
+        }
+        cos.close();
+        fis.close();
+        fos.close();
     }
 }
     

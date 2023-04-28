@@ -109,7 +109,6 @@ public class ServerSecurityManager {
         UserHandler userHandler = new UserHandler();
         FileHandlerServer fileHandler = FileHandlerServer.getInstance();
 
-        // fileHandler.decrypt();
         if(userHandler.isRegistered(userID)){
             outStream.writeLong(nonce);
             outStream.writeInt(1); 
@@ -159,6 +158,5 @@ public class ServerSecurityManager {
                 }
             }
         }
-        // fileHandler.encrypt();
     }
 }
