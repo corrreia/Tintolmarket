@@ -24,7 +24,7 @@ import java.security.cert.CertificateFactory;
 
 import javax.net.ssl.SSLServerSocket;
 
-import handlers.BlockchainHandler;
+import handlers.FileHandlerServer;
 import handlers.UserHandler;
 import security.sslserverconnection.SSLServerConnection;
 
@@ -130,16 +130,15 @@ public class ServerSecurityManager {
         return 1;
     }
 
-    public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID)
-            throws IOException, InterruptedException, ClassNotFoundException, InvalidKeyException,
-            NoSuchAlgorithmException, CertificateException, SignatureException {
+    public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws Exception {
         long nonce = generateNonce();
 
         UserHandler userHandler = new UserHandler();
+        FileHandlerServer fileHandler = FileHandlerServer.getInstance();
 
-        if (userHandler.isRegistered(userID)) {
-            outStream.writeLong(nonce);
-            outStream.writeInt(1);
+        if(userHandler.isRegistered(userID)){
+            outStream.writeLong(nonce); 
+            outStream.writeInt(1); 
             outStream.flush();
 
             Thread.sleep(100);
@@ -167,12 +166,14 @@ public class ServerSecurityManager {
             long nonceFromUser = inStream.readLong();
 
             String cert = (String) inStream.readObject();
-            int i = serverReceiveCertificate(inStream);
+            serverReceiveCertificate(inStream);
             System.out.println("Certificate received from user " + userID + "\n");
 
-            if (nonce == nonceFromUser) {
-                if (verifyNonce(signedNonce, nonceFromUser, userID)) {
-                    userHandler.registerUser(userID);
+            if(nonce == nonceFromUser){
+                if(verifyNonce(signedNonce, nonceFromUser, userID)){
+                    userHandler.registerUser(userID, cert);
+
+                    //FileHandlerServer.setupClientDirectory(userID);
 
                     outStream.writeObject("resgistered");
                     outStream.flush();

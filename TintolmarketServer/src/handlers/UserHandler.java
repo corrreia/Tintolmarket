@@ -26,58 +26,58 @@ public class UserHandler {
 
     public UserHandler() throws IOException {
         this.file = new File(FILE_NAME);
-        checkFile();
-        StateHandler.getInstance();
-    }
-
-    /**
-     * Checks if the file "credentials.txt" exists.
-     * If it doesn't exist, it creates it.
-     * 
-     * @throws IOException If there is an error with the file.
-     */
-    private void checkFile() throws IOException {
-        if (!file.exists()) {
-            file.createNewFile();
-        }
     }
 
     /**
      * Registers a new user.
      * Format: username:password
      * 
-     * @param userID The username of the user.
-     * @param passwd The password of the user.
-     * @return True if the user was registered successfully.
-     * @throws IOException If there is an error with the FileOutputStream.
+     * @param userID    The username of the user.
+     * @param cert
+     * @param passwd    The password of the user.
+     * @return  True if the user was registered successfully.
+     * @throws Exception
      */
-    public boolean registerUser(String userID) throws IOException {
+    public boolean registerUser(String userID, String cert) throws Exception {
+        FileHandlerServer fH = FileHandlerServer.getInstance();
+        fH.decrypt();
+        System.out.println(file.exists());
         FileOutputStream fs = new FileOutputStream(file, true);
-        fs.write((userID).getBytes());
+        fs.write((userID + ":" + cert).getBytes());
         fs.write(System.lineSeparator().getBytes());
         StateHandler.getInstance().addUser(userID);
         System.out.println("New user " + userID + " registered successfully");
         fs.close();
+        fH.encrypt();
+        System.out.println(file.exists());
         return true;
     }
 
     /**
      * Checks if the user is already registered.
      * 
-     * @param userID The username of the user.
-     * @return True if the user is already registered.
-     * @throws IOException If there is an error with the BufferedReader.
+     * @param userID    The username of the user.
+     * @return  True if the user is already registered.
+     * @throws Exception
      */
-    public boolean isRegistered(String userID) throws IOException {
+    public boolean isRegistered(String userID) throws Exception {
+        FileHandlerServer fH = FileHandlerServer.getInstance();
+        fH.decrypt();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {
-            if (line.equals(userID)) {
+            String[] user = line.split(":");
+            if (user[0].equals(userID)) {
+                System.out.println("User " + userID + " is already registered");
                 br.close();
+                fH.encrypt();
                 return true;
             }
         }
         br.close();
+        fH.encrypt();
         return false;
     }
+
+    
 }

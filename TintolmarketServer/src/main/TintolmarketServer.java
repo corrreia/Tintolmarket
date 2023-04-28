@@ -4,14 +4,21 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.List;
+import java.util.logging.FileHandler;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.net.ssl.SSLServerSocket;
 
-import exceptions.IncorrectArgumentsServerException;
+import handlers.FileHandlerServer;
 import handlers.OperationHandler;
 import security.ServerSecurityManager;
 
@@ -24,7 +31,7 @@ import security.ServerSecurityManager;
  */
 public class TintolmarketServer {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		System.out.println("------------------------=TintolmarketServer=------------------------");
 		TintolmarketServer server = new TintolmarketServer();
 		try {
@@ -40,17 +47,17 @@ public class TintolmarketServer {
 
 		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
-			System.out.println("Usage: TintolmarketServer 12345 password tintolmarket password\n");
+			System.out.println("Usage: TintolmarketServer 12345 password ServerKey 123456\n");
 		}
 	}
 
-	public void startServer(int port, String cipherPassword, String keyStoreName, String keyStorePassword) {
-		SSLServerSocket SSLserverSocket = null;
+	public void startServer(int port, String cipherPassword, String keyStoreName, String keyStorePassword) throws Exception {
+		SSLServerSocket SSLserverSocket = null;;
 
 		try {
 			SSLserverSocket = ServerSecurityManager.connect(port, keyStoreName, keyStorePassword);
-		} catch (IOException e) {
-
+			FileHandlerServer.startInstance(cipherPassword);
+		} catch (IOException e ) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
@@ -60,7 +67,7 @@ public class TintolmarketServer {
 				System.out.println("Waiting for connections...");
 				Socket socket = SSLserverSocket.accept();
 				System.out.println("Connection established with " + socket.getInetAddress().getHostAddress());
-				ServerThread newServerThread = new ServerThread(socket);
+				ServerThread newServerThread = new ServerThread(socket, cipherPassword);
 				newServerThread.start();
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
@@ -73,7 +80,7 @@ public class TintolmarketServer {
 
 		private Socket socket = null;
 
-		ServerThread(Socket inSoc) {
+		ServerThread(Socket inSoc, String cipherPassword) {
 			socket = inSoc;
 		}
 
@@ -86,9 +93,8 @@ public class TintolmarketServer {
 				try {
 					String userID = (String) inStream.readObject();
 					System.out.println("userID received\n");
-
+					
 					ServerSecurityManager.authenticate(outStream, inStream, userID);
-
 					OperationHandler operationHandler = new OperationHandler(inStream, outStream);
 					operationHandler.receiveAndProcessOps(userID);
 
@@ -98,6 +104,8 @@ public class TintolmarketServer {
 					System.out.println("Class not found: " + e.getMessage());
 				} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | SignatureException e) {
 					System.out.println("Error authenticating user: " + e.getMessage());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
 				outStream.close();

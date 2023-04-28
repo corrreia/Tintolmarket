@@ -61,48 +61,53 @@ public class OperationHandler {
      * @param in   The input stream of the client.
      * @throws IOException            If there is an error with the streams.
      * @throws ClassNotFoundException if there is an error with the class.
+     * @throws InterruptedException
      */
     public void receiveAndProcessOps(String user)
-            throws IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException, InterruptedException, Exception {
+        
+        try {
+            System.out.println("Waiting for operation from client...");
+        
+            // try to receive the command line from the client
+            String opFromClient = (String) in.readObject();
+            
+            String[] args = opFromClient.trim().split(" ");
+            String opType = args[0];
 
-        String opFromClient = (String) in.readObject();
+            while (!opType.equals("quit") && !opType.equals("q")) {
+                System.out.println("Received operation: " + opFromClient);
+                switch (opType) {
+                    case "add":
+                    case "a":
+                        System.out.println("Adding wine");
+                        String wineName = args[1];
+                        String imageFileName = args[2];
 
-        String[] args = opFromClient.trim().split(" ");
-        String opType = args[0];
+                        File directory = new File(IMAGES_FROM_CLIENT);
+                        if (!directory.exists()) {
+                            directory.mkdir(); // create the directory if it doesn't exist
+                            System.out.println("Directory created: " + directory.getAbsolutePath());
+                        }
 
-        while (!opType.equals("quit") && !opType.equals("q")) {
-            System.out.println("Received operation: " + opFromClient);
-            switch (opType) {
-                case "add":
-                case "a":
-                    System.out.println("Adding wine");
-                    String wineName = args[1];
-                    String imageFileName = args[2];
+                        int imageDataLength = in.readInt();
+                        byte[] imageData = new byte[imageDataLength];
+                        in.readFully(imageData);
 
-                    File directory = new File(IMAGES_FROM_CLIENT);
-                    if (!directory.exists()) {
-                        directory.mkdir(); // create the directory if it doesn't exist
-                        System.out.println("Directory created: " + directory.getAbsolutePath());
-                    }
+                        System.out.println("Image received: " + imageFileName);
+                        System.out.println("Image length: " + imageDataLength);
 
-                    int imageDataLength = in.readInt();
-                    byte[] imageData = new byte[imageDataLength];
-                    in.readFully(imageData);
+                        if (imageFileName.endsWith(".jpg")) {
+                            imageFileName = wineName + ".jpg";
+                        } else {
+                            imageFileName = wineName + ".png";
+                        }
 
-                    System.out.println("Image received: " + imageFileName);
-                    System.out.println("Image length: " + imageDataLength);
-
-                    if (imageFileName.endsWith(".jpg")) {
-                        imageFileName = wineName + ".jpg";
-                    } else {
-                        imageFileName = wineName + ".png";
-                    }
-
-                    File file = new File(IMAGES_FROM_CLIENT + "/" + imageFileName);
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(imageData);
-                    fos.flush();
-                    fos.close();
+                        File file = new File(IMAGES_FROM_CLIENT + "/" + imageFileName);
+                        FileOutputStream fos = new FileOutputStream(file);
+                        fos.write(imageData);
+                        fos.flush();
+                        fos.close();
 
                     out.writeInt(stateHandler.addWine(wineName, imageFileName));
                     out.flush();
@@ -137,18 +142,18 @@ public class OperationHandler {
                     String wineToView = args[1];
                     String wineView = stateHandler.wineView(wineToView);
 
-                    if (wineView == null) {
-                        out.writeInt(-1);
-                        out.flush();
-                    } else {
-                        // go on to IMAGES_FROM_CLIENT get the image and send it
-                        // it could be a .jpg or a .png
-                        // IMAGES_FROM_CLIENT + File.separator + wineToView
-                        File imageFile = new File(IMAGES_FROM_CLIENT + File.separator + wineToView + ".jpg");
-                        if (!imageFile.exists()) {
-                            imageFile = new File(IMAGES_FROM_CLIENT + File.separator + wineToView + ".png");
-                        }
-                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                        if (wineView == null) {
+                            out.writeInt(-1);
+                            out.flush();
+                        } else {
+                            // go on to IMAGES_FROM_CLIENT get the image and send it
+                            // it could be a .jpg or a .png
+                            // IMAGES_FROM_CLIENT + File.separator + wineToView
+                            File imageFile = new File(IMAGES_FROM_CLIENT + File.separator + wineToView + ".jpg");
+                            if (!imageFile.exists()) {
+                                imageFile = new File(IMAGES_FROM_CLIENT + File.separator + wineToView + ".png");
+                            }
+                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
 
                         out.writeInt(0); // no error
                         out.writeObject(wineView); // send the wine info
@@ -229,13 +234,17 @@ public class OperationHandler {
                     break;
             }
 
-            if (!opType.equals("quit") || !opType.equals("q")) {
-                opFromClient = (String) in.readObject();
-                args = opFromClient.trim().split(" ");
-                opType = args[0];
+                if (!opType.equals("quit") || !opType.equals("q")) {
+                    opFromClient = (String) in.readObject();
+                    args = opFromClient.trim().split(" ");
+                    opType = args[0];
+                }
             }
-        }
 
-        System.out.println("Closing connection with client " + user);
+            System.out.println("Closing connection with client " + user);
+        } catch (IOException e) {
+            System.out.println("Connection with client " + user + " closed");
+        }
     }
+
 }

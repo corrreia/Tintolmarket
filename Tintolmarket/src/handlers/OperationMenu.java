@@ -386,6 +386,10 @@ public class OperationMenu {
     public void receiveOperation(BufferedReader in) throws Exception {
         System.out.print("Enter an operation: ");
         String op = in.readLine();
+        if (op == null) {
+            System.out.println("\nBye!");
+            return;
+        }
 
         String[] opSplit = op.trim().split(" ");
         String command = opSplit[0];
@@ -508,13 +512,16 @@ public class OperationMenu {
             if (!command.equals("quit") && !command.equals("q") && !op.equals(null)) {
                 System.out.print("Enter an operation: ");
                 op = in.readLine();
+                if(op == null){
+                    break;
+                }
 
                 opSplit = op.trim().split(" ");
                 command = opSplit[0];
             }
         }
 
-        System.out.println("Bye!");
+        System.out.println("\nBye!");
         outStream.writeObject(command);
         outStream.flush();
     }
