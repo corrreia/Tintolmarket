@@ -92,13 +92,12 @@ public class BlockchainHandler {
         System.out.println("Block count: " + blockCount);
         System.out.println("Transactions in block: " + transactionsInBlock);
         System.out.println("Previous block hash: " + previousBlockHash);
-
-        System.out.println("Blockchain: " + listBlockchain());
     }
 
     public String listBlockchain() {
         StringBuilder sb = new StringBuilder();
         for (Block block : blockchain) {
+            sb.append("Block " + block.getBlockNumber() + "\n");
             for (Transaction transaction : block.getTransactions()) {
                 sb.append(transaction.toString());
                 sb.append("\n");
@@ -127,7 +126,7 @@ public class BlockchainHandler {
         }
     }
 
-    public boolean verifyBlockchainIntegrity() {
+    private boolean verifyBlockchainIntegrity() {
         // check if blockchain folder exists
         File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
         if (!blockchainFolder.exists() || !blockchainFolder.isDirectory()) {

@@ -4,20 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-import java.util.logging.FileHandler;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.net.ssl.SSLServerSocket;
 
+import exceptions.IncorrectArgumentsServerException;
 import handlers.FileHandlerServer;
 import handlers.OperationHandler;
 import security.ServerSecurityManager;

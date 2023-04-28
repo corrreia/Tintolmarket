@@ -24,6 +24,7 @@ import java.security.cert.CertificateFactory;
 
 import javax.net.ssl.SSLServerSocket;
 
+import handlers.BlockchainHandler;
 import handlers.FileHandlerServer;
 import handlers.UserHandler;
 import security.sslserverconnection.SSLServerConnection;
