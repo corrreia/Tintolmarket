@@ -284,6 +284,7 @@ public class OperationMenu {
      */
     private void talk(String user, String message) throws IOException {
         operation = "talk " + user + " " + message;
+        
         outStream.writeObject(operation);
         outStream.flush();
 

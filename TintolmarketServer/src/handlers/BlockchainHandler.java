@@ -15,6 +15,14 @@ import java.util.Comparator;
 import objects.Block;
 import objects.Transaction;
 
+/**
+ * Class that handles the blockchain.
+ * 
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
+ */
 public class BlockchainHandler {
     private static BlockchainHandler instance = null;
 
@@ -29,6 +37,11 @@ public class BlockchainHandler {
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
+    /**
+     * Constructor for the BlockchainHandler class.
+     * @param privateKey        Private key of the server.  
+     * @param publicKey        Public key of the server.
+     */
     private BlockchainHandler(PrivateKey privateKey, PublicKey publicKey) {
         this.blockchain = new ArrayList<>();
         blockchain.add(new Block(0, "00000000000000000000000000000000"));
@@ -39,6 +52,12 @@ public class BlockchainHandler {
         this.publicKey = publicKey;
     }
 
+    /**
+     * Method that starts the blockchain instance.
+     * @param privateKey    Private key of the server.
+     * @param publicKey       Public key of the server.
+     * @return              The blockchain instance.
+     */
     public static BlockchainHandler startInstance(PrivateKey privateKey, PublicKey publicKey) {
         if (instance == null) {
             instance = new BlockchainHandler(privateKey, publicKey);
@@ -47,10 +66,17 @@ public class BlockchainHandler {
         return instance;
     }
 
+    /**
+     * Method that returns the blockchain instance.
+     * @return            The blockchain instance.
+     */
     public static BlockchainHandler getInstance() {
         return instance;
     }
 
+    /**
+     * Method that loads the blockchain.
+     */
     private void loadBlockchain() {
         // check if blockchain folder exists
         File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
@@ -94,6 +120,10 @@ public class BlockchainHandler {
         System.out.println("Previous block hash: " + previousBlockHash);
     }
 
+    /**
+     * Method that lists the blockchain.
+     * @return          The blockchain.
+     */
     public String listBlockchain() {
         StringBuilder sb = new StringBuilder();
         for (Block block : blockchain) {
@@ -106,6 +136,10 @@ public class BlockchainHandler {
         return sb.toString();
     }
 
+    /**
+     * Method that adds a block to the blockchain.
+     * @param block    The block to be added.
+     */
     private void addBlockToBlockchain(Block block) {
         blockchain.add(block);
         blockCount++;
@@ -113,6 +147,10 @@ public class BlockchainHandler {
         writeBlockToFile(block);
     }
 
+    /**
+     * Method that writes a block to a file
+     * @param block   The block to be written.
+     */
     private void writeBlockToFile(Block block) {
         try {
             File file = new File(BLOCKCHAIN_FOLDER + File.separator + "block_" + blockCount + ".blk");
@@ -126,6 +164,10 @@ public class BlockchainHandler {
         }
     }
 
+    /**
+     * Method that verifies the blockchain integrity.
+     * @return        True if the blockchain is valid, false otherwise.
+     */
     private boolean verifyBlockchainIntegrity() {
         // check if blockchain folder exists
         File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
@@ -170,6 +212,12 @@ public class BlockchainHandler {
 
     }
 
+    /**
+     * Method that adds a transaction to the blockchain.
+     * @param transaction   The transaction to be added.
+     * @param signature    The signature of the transaction.
+     * @param userPublicKey The public key of the user.
+     */
     public void addTransaction(Transaction transaction, String signature, PublicKey userPublicKey) {
         // Verify transaction signature
         if (!transaction.verifyTransactionSignature(userPublicKey, signature)) {

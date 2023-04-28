@@ -25,7 +25,6 @@ import java.security.cert.CertificateFactory;
 import javax.net.ssl.SSLServerSocket;
 
 import handlers.BlockchainHandler;
-import handlers.FileHandlerServer;
 import handlers.UserHandler;
 import security.sslserverconnection.SSLServerConnection;
 
@@ -88,10 +87,10 @@ public class ServerSecurityManager {
         String certificatePath;
 
         if (certificateName.contains(".cer")) {
-            certificatePath = "TintolmarketServer" + File.separator + CERTIFICATES_DIRECTORY + certificateName;
+            certificatePath = CERTIFICATES_DIRECTORY + certificateName;
         } else {
             String userId = certificateName;
-            certificatePath = "TintolmarketServer" + File.separator + CERTIFICATES_DIRECTORY + userId + ".cer";
+            certificatePath = CERTIFICATES_DIRECTORY + userId + ".cer";
         }
 
         FileInputStream fis = new FileInputStream(certificatePath);
@@ -106,7 +105,7 @@ public class ServerSecurityManager {
         String fileName = (String) in.readObject();
         int fileSize = (int) in.readObject();
 
-        String dest = "TintolmarketServer" + File.separator + CERTIFICATES_DIRECTORY + fileName;
+        String dest = CERTIFICATES_DIRECTORY + fileName;
 
         File file = new File(dest);
         if (file.exists()) {
@@ -135,7 +134,6 @@ public class ServerSecurityManager {
         long nonce = generateNonce();
 
         UserHandler userHandler = new UserHandler();
-        FileHandlerServer fileHandler = FileHandlerServer.getInstance();
 
         if(userHandler.isRegistered(userID)){
             outStream.writeLong(nonce); 

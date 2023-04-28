@@ -26,7 +26,7 @@ import security.sslclientconnection.SSLClientConnection;
 
 public class ClientSecurityManager {
 
-    private final static String CLIENT_KEYS = "Tintolmarket" + File.separator + "Clients" + File.separator;
+    private final static String CLIENT_KEYS = "Clients" + File.separator;
 
     private static final String KEY_STORE_TYPE = "PKCS12";
 
