@@ -25,11 +25,11 @@
     3.1 Terminal
     - Para executar o servidor TintolmarketServer:
         - ir à diretoria jars e no terminal escrever:
-            java -jar TintolmarketServer.jar <port> (por omissão o port será, por default, 12345)
+            java -jar TintolmarketServer.jar <port> <cipherPassword> <keyStoreName> <keyStorePassword>"
 
     - Para executar o cliente Tintolmarket:
         - ir à diretoria jars e no terminal escrever:
-            java -jar Tintolmarket.jar <host>:<port> <user> <password>
+            java -jar Tintolmarket.jar <server_address>:<port> <truststore> <keystore> <keystore_password> <user_id>
 
     3.2 VScode
     - Na pasta ".vscode" está um ficheiro "launch.json" que permite correr através do próprio IDE.
@@ -37,14 +37,16 @@
 
     3.3 Eclipse
     - Para executar o servidor TintolmarketServer:
-        - Run configurations com arguments: 12345
+        - Run configurations com arguments: 12345 <cipherPassword> <keyStoreName> <keyStorePassword>"
 
     - Para executar o cliente Tintolmarket:
-        - Run configurations com arguments: 127.0.0.1:12345 <user> <password> (user e password à escolha) 
+        - Run configurations com arguments: 127.0.0.1:12345 <truststore> <keystore> <keystore_password> <user_id>
 
 ------------------------- Limitações -----------------------------
 
-  - Sem limitações conhecidas
+  - Não é feita a encriptação de mensagens.
+  - Também não há a verificação da integridade dos ficheiros.
+  - Por vezes, na permeira execução há um problema de autorização no cliente, quando acontece basta reiniciar o cliente.
 
 --------------------- Estrutura do Projeto -----------------------
 
@@ -65,7 +67,7 @@
 
  - Quando corremos o servidor e o cliente, dentro da diretoria dos jars são criados
  todos os ficheiros necessários para a execução do programa, incluindo os ficheiros .ser
- que contêm os dados dos utilizadores e dos vinhos e ainda o ficheiro "credentials.txt"
+ que contêm os dados dos utilizadores e dos vinhos e ainda o ficheiro "users.cif"
  que tem os pares <username>:<password> dos utilizadores registados.
 
  - No comando add <wine> <image> o <image> é o caminho para a imagem do vinho e deve ser possível

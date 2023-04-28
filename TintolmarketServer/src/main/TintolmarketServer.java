@@ -41,7 +41,8 @@ public class TintolmarketServer {
 
 		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
-			System.out.println("Usage: TintolmarketServer 12345 password ServerKey 123456\n");
+			System.out.println("Usage: java TintolmarketServer <port> <cipherPassword> <keyStoreName> <keyStorePassword>");
+
 		}
 	}
 
