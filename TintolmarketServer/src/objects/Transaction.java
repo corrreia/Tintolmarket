@@ -8,6 +8,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.Base64;
 
 public class Transaction implements Serializable {
     private Type type;
@@ -15,7 +16,6 @@ public class Transaction implements Serializable {
     private int units;
     private double unitPrice;
     private String ownerId;
-    private String signature;
 
     public enum Type {
         BUY,
@@ -34,75 +34,43 @@ public class Transaction implements Serializable {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public String getWineId() {
         return wineId;
-    }
-
-    public void setWineId(String wineId) {
-        this.wineId = wineId;
     }
 
     public int getUnits() {
         return units;
     }
 
-    public void setUnits(int units) {
-        this.units = units;
-    }
-
     public double getUnitPrice() {
         return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
     }
 
     public String getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public void sign(PrivateKey privateKey) {
+    public String sign(PrivateKey privateKey) {
+        String sign = null;
         try {
             Signature rsa = Signature.getInstance("SHA256withRSA");
             rsa.initSign(privateKey);
             rsa.update(this.toString().getBytes(StandardCharsets.UTF_8));
-            this.signature = rsa.sign().toString();
+            byte[] signatureBytes = rsa.sign();
+            sign = Base64.getEncoder().encodeToString(signatureBytes);
         } catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException e) {
             System.out.println("Error signing transaction: " + e.getMessage());
         }
+        return sign;
     }
 
-    public boolean verify(PublicKey publicKey)
-            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        Signature rsa = Signature.getInstance("SHA256withRSA");
-        rsa.initVerify(publicKey);
-        rsa.update(this.toString().getBytes(StandardCharsets.UTF_8));
-        return rsa.verify(this.signature.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public boolean verifyTransactionSignature(PublicKey publicKey) {
+    public boolean verifyTransactionSignature(PublicKey publicKey, String signatureText) {
         try {
             Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initVerify(publicKey);
             signature.update(this.toString().getBytes());
-            return signature.verify(this.signature.getBytes(StandardCharsets.UTF_8));
+            byte[] signatureBytes = Base64.getDecoder().decode(signatureText);
+            return signature.verify(signatureBytes);
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
             e.printStackTrace();
         }
@@ -112,6 +80,6 @@ public class Transaction implements Serializable {
     @Override
     public String toString() {
         return "Transaction [type=" + type + ", wineId=" + wineId + ", units=" + units + ", unitPrice="
-                + unitPrice + ", ownerId=" + ownerId + ", signature=" + signature + "]";
+                + unitPrice + ", ownerId=" + ownerId + "]";
     }
 }

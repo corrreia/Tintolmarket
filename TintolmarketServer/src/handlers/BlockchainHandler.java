@@ -31,9 +31,10 @@ public class BlockchainHandler {
 
     private BlockchainHandler(PrivateKey privateKey, PublicKey publicKey) {
         this.blockchain = new ArrayList<>();
+        blockchain.add(new Block(0, "00000000000000000000000000000000"));
         this.transactionsInBlock = 0;
-        this.blockCount = 0;
-        this.previousBlockHash = "00000000000000000000000000000000"; // 32 zeros (256 bits)
+        this.blockCount = 1;
+        this.previousBlockHash = "";
         this.privateKey = privateKey;
         this.publicKey = publicKey;
     }
@@ -41,6 +42,7 @@ public class BlockchainHandler {
     public static BlockchainHandler startInstance(PrivateKey privateKey, PublicKey publicKey) {
         if (instance == null) {
             instance = new BlockchainHandler(privateKey, publicKey);
+            instance.loadBlockchain();
         }
         return instance;
     }
@@ -49,10 +51,11 @@ public class BlockchainHandler {
         return instance;
     }
 
-    public void loadBlockchain() {
+    private void loadBlockchain() {
         // check if blockchain folder exists
         File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
         if (!blockchainFolder.exists() || !blockchainFolder.isDirectory()) {
+            System.out.println("Blockchain folder does not exist.");
             return;
         }
 
@@ -62,6 +65,7 @@ public class BlockchainHandler {
 
         // check if there are any block files
         if (blockFiles.length == 0) {
+            System.out.println("Blockchain folder exists but is empty.");
             return;
         }
 
@@ -80,21 +84,26 @@ public class BlockchainHandler {
             blockchain.add(block);
             blockCount++;
             transactionsInBlock = block.getTransactions().size();
-            previousBlockHash = block.getBlockHash();
+            previousBlockHash = blockchain.get(blockchain.size() - 2).calculateBlockHash();
         }
+
+        System.out.println("Blockchain loaded successfully.");
+        System.out.println("Blockchain size: " + blockchain.size());
+        System.out.println("Block count: " + blockCount);
+        System.out.println("Transactions in block: " + transactionsInBlock);
+        System.out.println("Previous block hash: " + previousBlockHash);
     }
 
     private void addBlockToBlockchain(Block block) {
         blockchain.add(block);
         blockCount++;
         transactionsInBlock = 0;
-        previousBlockHash = block.calculateBlockHash();
         writeBlockToFile(block);
     }
 
     private void writeBlockToFile(Block block) {
         try {
-            File file = new File("block_" + blockCount + ".blk");
+            File file = new File(BLOCKCHAIN_FOLDER + File.separator + "block_" + blockCount + ".blk");
             FileOutputStream fileOut = new FileOutputStream(file);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
             objectOut.writeObject(block);
@@ -149,9 +158,10 @@ public class BlockchainHandler {
 
     }
 
-    public void addTransaction(Transaction transaction, PublicKey userPublicKey) {
+    public void addTransaction(Transaction transaction, String signature, PublicKey userPublicKey) {
         // Verify transaction signature
-        if (!transaction.verifyTransactionSignature(userPublicKey)) {
+        if (!transaction.verifyTransactionSignature(userPublicKey, signature)) {
+            System.out.println("Transaction signature is not valid");
             return;
         }
 
@@ -160,11 +170,15 @@ public class BlockchainHandler {
             transactionsInBlock++;
             blockchain.get(((int) blockCount) - 1).addTransaction(transaction);
             writeBlockToFile(blockchain.get(((int) blockCount) - 1));
+            System.out.println("Transaction added to block " + blockCount);
         } else {
-            Block block = new Block(blockCount, previousBlockHash);
-            block.addTransaction(transaction);
-            block.signBlock(privateKey);
-            addBlockToBlockchain(block);
+            blockchain.get(((int) blockCount) - 1).signBlock(privateKey);
+            previousBlockHash = blockchain.get(((int) blockCount) - 1).calculateBlockHash();
+            System.out.println("Block " + blockCount + " signed , obtained hash " + previousBlockHash);
+
+            addBlockToBlockchain(new Block(blockCount, previousBlockHash));
+            System.out.println("Block " + blockCount + " created");
+            addTransaction(transaction, signature, userPublicKey);
         }
     }
 

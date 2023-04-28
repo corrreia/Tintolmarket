@@ -115,19 +115,21 @@ public class OperationHandler {
                     int quantity = Integer.parseInt(args[3]);
                     int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
                     out.writeInt(returnCode);
-
-                    // Transaction transaction = (Transaction) in.readObject();
-                    // System.out.println("Transaction received: " + transaction);
-                    // PublicKey pubKey = null;
-                    // try {
-                    //     pubKey = ServerSecurityManager.getPublicKeyFromCertificate(user + ".cer");
-                    // } catch (CertificateException e) {
-                    //     System.out.println("Certificate not found");
-                    //     break;
-                    // }
-                    // BlockchainHandler.getInstance().addTransaction(transaction, pubKey);
-
                     out.flush();
+                    
+                    if(returnCode == 0) {
+                        Transaction transaction = (Transaction) in.readObject();
+                        PublicKey pubKey = null;
+                        try {
+                            pubKey = ServerSecurityManager.getPublicKeyFromCertificate(user + ".cer");
+                        } catch (CertificateException e) {
+                            System.out.println("Certificate not found");
+                            break;
+                        }
+                        String signature = (String) in.readObject();
+                        BlockchainHandler.getInstance().addTransaction(transaction, signature, pubKey);
+                    }
+
                     break;
                 case "view":
                 case "v":
@@ -165,20 +167,21 @@ public class OperationHandler {
                     int quantityToBuy = Integer.parseInt(args[3]);
                     int wineBuy = stateHandler.buySellWine(seller, user, wineToBuy, quantityToBuy);
                     out.writeInt(wineBuy);
-
-
-
-                    // Transaction transactionB = (Transaction) in.readObject();
-                    // System.out.println("Transaction received: " + transactionB);
-                    // PublicKey pubKeyB = null;
-                    // try {
-                    //     pubKey = ServerSecurityManager.getPublicKeyFromCertificate(user + ".cer");
-                    // } catch (CertificateException e) {
-                    //     System.out.println("Certificate not found");
-                    //     break;
-                    // }
-                    // BlockchainHandler.getInstance().addTransaction(transactionB, pubKeyB);
                     out.flush();
+
+                    if (wineBuy == 0) {
+                        Transaction transaction = (Transaction) in.readObject();
+                        PublicKey pubKey = null;
+                        try {
+                            pubKey = ServerSecurityManager.getPublicKeyFromCertificate(user + ".cer");
+                        } catch (CertificateException e) {
+                            System.out.println("Certificate not found");
+                            break;
+                        }
+                        String signature = (String) in.readObject();
+                        BlockchainHandler.getInstance().addTransaction(transaction, signature, pubKey);
+                    }
+
                     break;
                 case "wallet":
                 case "w":

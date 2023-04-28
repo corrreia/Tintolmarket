@@ -119,15 +119,12 @@ public class OperationMenu {
             int serverResponse = inStream.readInt();
             if (serverResponse == 0) {
                 System.out.println("Wine " + wine + " is now up for sale.");
-
-                // Transaction transaction = new Transaction(Transaction.Type.SELL, wine, Integer.parseInt(quantity),
-                //         Long.valueOf(value), username);
-
-                // transaction.sign(ClientSecurityManager.getPrivateKey());
-
-                // System.out.println(transaction);
-
-                // outStream.writeObject(transaction);
+                Transaction transaction = new Transaction(Transaction.Type.SELL, wine, Integer.parseInt(quantity),
+                        Long.valueOf(value), username);
+                String si = transaction.sign(ClientSecurityManager.getPrivateKey());
+                outStream.writeObject(transaction);
+                outStream.writeObject(si);
+                outStream.flush();
 
             } else if (serverResponse == -1) {
                 System.out.println("Wine " + wine + " does not exist. Please add the wine first and try again.");
@@ -197,10 +194,12 @@ public class OperationMenu {
                 if (serverResponse == 0) {
                     System.out.println(quantity + " bottles of " + wine + " bought successfully.");
 
-                    // Transaction transaction = new Transaction(Transaction.Type.BUY, wine,
-                    //         Integer.parseInt(quantity),
-                    //         0.0, username);
-
+                    Transaction transaction = new Transaction(Transaction.Type.BUY, wine, Integer.parseInt(quantity),
+                            0.0, username);
+                    String si = transaction.sign(ClientSecurityManager.getPrivateKey());
+                    outStream.writeObject(transaction);
+                    outStream.writeObject(si);
+                    outStream.flush();
 
                 } else if (serverResponse == -1) {
                     System.out.println("Wine " + wine + " does not exist. Please try again.");
