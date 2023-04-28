@@ -63,7 +63,6 @@ public class UserHandler {
     public boolean isRegistered(String userID) throws Exception {
         FileHandlerServer fH = FileHandlerServer.getInstance();
         fH.decrypt();
-        System.out.println(file.exists());
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {

@@ -30,10 +30,6 @@ public class ServerSecurityManager {
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
 	public final static String CERTIFICATES_DIRECTORY = SECURITY_DIRECTORY + "certificates" + File.separator;
 
-    private static final int ITERATIONS = 20;
-    private static final String CIPHER_ALGORITHM = "PBEWithHmacSHA256AndAES_128";
-    private static final String KEY_ALGORITHM = "PBEWithHmacSHA256AndAES_128";
-
 
     private static long generateNonce() {
         SecureRandom random = new SecureRandom();
@@ -110,7 +106,7 @@ public class ServerSecurityManager {
         FileHandlerServer fileHandler = FileHandlerServer.getInstance();
 
         if(userHandler.isRegistered(userID)){
-            outStream.writeLong(nonce);
+            outStream.writeLong(nonce); 
             outStream.writeInt(1); 
             outStream.flush();
 

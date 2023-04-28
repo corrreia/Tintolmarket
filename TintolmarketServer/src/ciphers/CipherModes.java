@@ -7,12 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.AlgorithmParameters;
-import java.security.SecureRandom;
-import java.security.Policy.Parameters;
-import java.util.Arrays;
-
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -64,6 +59,7 @@ public class CipherModes {
         oos = new ObjectOutputStream(kos);
         oos.writeObject(c.getParameters().getEncoded());
 
+        kos.close();
         oos.close();
         kos.close();
         fis.close();
@@ -107,7 +103,7 @@ public class CipherModes {
             fis.write(b, 0, i);
             i = cos.read(b);
         }
-        
+
         oin.close();
         cos.close();
         fis.close();

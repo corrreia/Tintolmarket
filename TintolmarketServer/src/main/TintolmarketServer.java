@@ -57,8 +57,7 @@ public class TintolmarketServer {
 		try {
 			SSLserverSocket = ServerSecurityManager.connect(port, keyStoreName, keyStorePassword);
 			FileHandlerServer.startInstance(cipherPassword);
-		} catch (IOException e) {
-			
+		} catch (IOException e ) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
@@ -106,7 +105,6 @@ public class TintolmarketServer {
 				} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | SignatureException e) {
 					System.out.println("Error authenticating user: " + e.getMessage());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
