@@ -8,7 +8,7 @@
 
 ------------------------- Instruções ----------------------------
 
-1 - Unzip do ficheiro SegC-grupo03-proj1-fase1.zip
+1 - Unzip do ficheiro SegC-grupo03-proj1-fase2.zip
 
 2 - Para compilar e executar o programa temos duas opções:
 
@@ -55,6 +55,7 @@
         - exceptions
         - handlers
         - main
+        - security
 
  -TintolmarketServer
     -src
@@ -62,12 +63,13 @@
         - handlers
         - main
         - objects
+        - security
 
 ---------------------------- Notas --------------------------------
 
  - Quando corremos o servidor e o cliente, dentro da diretoria dos jars são criados
  todos os ficheiros necessários para a execução do programa, incluindo os ficheiros .ser
- que contêm os dados dos utilizadores e dos vinhos e ainda o ficheiro "users.cif"
+ que contêm os dados dos utilizadores e dos vinhos e ainda o ficheiro "users.txt"
  que tem os pares <username>:<password> dos utilizadores registados.
 
  - No comando add <wine> <image> o <image> é o caminho para a imagem do vinho e deve ser possível
@@ -75,6 +77,12 @@
  "jars" é criada uma pasta "serverWineImages" que contém todas as imagens enviadas
  pelo cliente e recebidas pelo servidor.
 
- - Quando terminado o client com CTRL-C dá uma exceção por causa do trim, esta em nada afeta 
- a execução do programa. Por isto optar por terminar sempre o uso com o comando "quit" ou "q".
+ - Temos pastas com os ficheiros de cada user na pasta jars/client/Clients. Cada pasta tem a keystore
+ e o certificado. 
+
+ - O ficheiro "users.txt" contém os pares <username>:<cert> que está encriptado.
+
+ - Temos também a nova funcionalidade da blockchain onde é gerada a pasta blockchain com os ficheiros .blk 
+que contêm as transações.
+
  
