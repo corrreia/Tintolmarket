@@ -107,6 +107,8 @@ public class CipherModes {
             fis.write(b, 0, i);
             i = cos.read(b);
         }
+        
+        oin.close();
         cos.close();
         fis.close();
         fos.close();

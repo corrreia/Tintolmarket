@@ -76,6 +76,7 @@ public class UserHandler {
             }
         }
         br.close();
+        fH.encrypt();
         return false;
     }
 

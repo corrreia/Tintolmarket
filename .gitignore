@@ -5,3 +5,6 @@ users.txt
 *.jpg
 /bin/
 *.png
+users.cif
+cipher.key
+cipher.params
