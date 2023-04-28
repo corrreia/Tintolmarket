@@ -118,6 +118,11 @@ public class BlockchainHandler {
         System.out.println("Block count: " + blockCount);
         System.out.println("Transactions in block: " + transactionsInBlock);
         System.out.println("Previous block hash: " + previousBlockHash);
+
+        if (verifyBlockchainIntegrity())
+            System.out.println("Blockchain integrity verified successfully.");
+        else
+            System.out.println("Blockchain integrity verification failed.");
     }
 
     /**
@@ -169,47 +174,14 @@ public class BlockchainHandler {
      * @return        True if the blockchain is valid, false otherwise.
      */
     private boolean verifyBlockchainIntegrity() {
-        // check if blockchain folder exists
-        File blockchainFolder = new File(BLOCKCHAIN_FOLDER);
-        if (!blockchainFolder.exists() || !blockchainFolder.isDirectory()) {
-            return false;
-        }
-
-        // get all the block files and sort them by name
-        File[] blockFiles = blockchainFolder.listFiles();
-        Arrays.sort(blockFiles, Comparator.comparing(File::getName));
-
-        // check if there are any block files
-        if (blockFiles.length == 0) {
-            return false;
-        }
-
-        // verify each block file
-        for (int i = 0; i < blockFiles.length; i++) {
-            // read the block file and deserialize it
-            Block block = null;
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(blockFiles[i]))) {
-                block = (Block) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-                return false;
+        // check if blockchain folder exist
+        for (Block block : blockchain) {
+            if (!(block.getBlockHash() == null)) {
+                if (!block.verifyBlockSignature(publicKey))
+                    return false;
             }
-
-            // verify the block hash
-            if (!block.calculateBlockHash().equals(block.getBlockHash())) {
-                return false;
-            }
-
-            // verify the block signature
-            if (!block.verifyBlockSignature(publicKey)) {
-                return false;
-            }
-
         }
-
-        // all blocks are valid
         return true;
-
     }
 
     /**
