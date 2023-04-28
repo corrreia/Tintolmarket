@@ -6,7 +6,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
 import java.util.List;
+
+import objects.Transaction;
+import security.ServerSecurityManager;
 
 /**
  * Class that handles the operations of the server.
@@ -16,8 +21,8 @@ import java.util.List;
  * and sends the appropriate response to the client.
  * 
  * @author Tomás Correia | fc57102
- * @author Miguel Pato   | fc56372
- * @author João Vieira   | fc45677
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
  */
 public class OperationHandler {
 
@@ -27,7 +32,6 @@ public class OperationHandler {
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    
 
     /**
      * Constructor for the OperationHandler class.
@@ -53,9 +57,9 @@ public class OperationHandler {
      * - quit or q
      * 
      * @param user The username of the client.
-     * @param out The output stream of the client.
-     * @param in The input stream of the client.
-     * @throws IOException If there is an error with the streams.
+     * @param out  The output stream of the client.
+     * @param in   The input stream of the client.
+     * @throws IOException            If there is an error with the streams.
      * @throws ClassNotFoundException if there is an error with the class.
      */
     public void receiveAndProcessOps(String user)
@@ -111,6 +115,18 @@ public class OperationHandler {
                     int quantity = Integer.parseInt(args[3]);
                     int returnCode = stateHandler.addWineListingToUser(user, wine, quantity, price);
                     out.writeInt(returnCode);
+
+                    // Transaction transaction = (Transaction) in.readObject();
+                    // System.out.println("Transaction received: " + transaction);
+                    // PublicKey pubKey = null;
+                    // try {
+                    //     pubKey = ServerSecurityManager.getPublicKeyFromCertificate(user + ".cer");
+                    // } catch (CertificateException e) {
+                    //     System.out.println("Certificate not found");
+                    //     break;
+                    // }
+                    // BlockchainHandler.getInstance().addTransaction(transaction, pubKey);
+
                     out.flush();
                     break;
                 case "view":
@@ -149,6 +165,19 @@ public class OperationHandler {
                     int quantityToBuy = Integer.parseInt(args[3]);
                     int wineBuy = stateHandler.buySellWine(seller, user, wineToBuy, quantityToBuy);
                     out.writeInt(wineBuy);
+
+
+
+                    // Transaction transactionB = (Transaction) in.readObject();
+                    // System.out.println("Transaction received: " + transactionB);
+                    // PublicKey pubKeyB = null;
+                    // try {
+                    //     pubKey = ServerSecurityManager.getPublicKeyFromCertificate(user + ".cer");
+                    // } catch (CertificateException e) {
+                    //     System.out.println("Certificate not found");
+                    //     break;
+                    // }
+                    // BlockchainHandler.getInstance().addTransaction(transactionB, pubKeyB);
                     out.flush();
                     break;
                 case "wallet":

@@ -1,15 +1,25 @@
-package blockchain;
+package handlers;
 
-import java.io.*;
-import java.security.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import objects.Block;
+import objects.Transaction;
+
 public class BlockchainHandler {
-    private static final String BLOCKCHAIN_FOLDER = null;
+    private static BlockchainHandler instance = null;
+
+    private static final String BLOCKCHAIN_FOLDER = "blockchain";
     private static final long MAX_TRANSACTIONS = 5;
-    private int transactionIdCounter = 0;
 
     private ArrayList<Block> blockchain;
     private int transactionsInBlock;
@@ -19,13 +29,24 @@ public class BlockchainHandler {
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
-    public BlockchainHandler(PrivateKey privateKey, PublicKey publicKey) {
-        blockchain = new ArrayList<>();
-        transactionsInBlock = 0;
-        blockCount = 0;
-        previousBlockHash = "00000000000000000000000000000000"; // 32 zeros (256 bits)
+    private BlockchainHandler(PrivateKey privateKey, PublicKey publicKey) {
+        this.blockchain = new ArrayList<>();
+        this.transactionsInBlock = 0;
+        this.blockCount = 0;
+        this.previousBlockHash = "00000000000000000000000000000000"; // 32 zeros (256 bits)
         this.privateKey = privateKey;
         this.publicKey = publicKey;
+    }
+
+    public static BlockchainHandler startInstance(PrivateKey privateKey, PublicKey publicKey) {
+        if (instance == null) {
+            instance = new BlockchainHandler(privateKey, publicKey);
+        }
+        return instance;
+    }
+
+    public static BlockchainHandler getInstance() {
+        return instance;
     }
 
     public void loadBlockchain() {
@@ -128,23 +149,23 @@ public class BlockchainHandler {
 
     }
 
-    public void addTransaction(String wineId, int units, double unitPrice, String ownerId, PrivateKey userPrivateKey)
-            throws InvalidKeyException, NoSuchAlgorithmException, SignatureException {
-        // sign the transaction data
-        Transaction transaction = new Transaction(transactionIdCounter++, wineId, units, unitPrice, ownerId);
+    public void addTransaction(Transaction transaction, PublicKey userPublicKey) {
+        // Verify transaction signature
+        if (!transaction.verifyTransactionSignature(userPublicKey)) {
+            return;
+        }
 
-        transaction.sign(userPrivateKey);
-
+        // Create a new block if the current block is full
         if (transactionsInBlock < MAX_TRANSACTIONS) {
-            // add the transaction to the current block
-            blockchain.get(blockchain.size() - 1).addTransaction(transaction);
             transactionsInBlock++;
+            blockchain.get(((int) blockCount) - 1).addTransaction(transaction);
+            writeBlockToFile(blockchain.get(((int) blockCount) - 1));
         } else {
-            // create a new block and add the transaction to it
             Block block = new Block(blockCount, previousBlockHash);
             block.addTransaction(transaction);
             block.signBlock(privateKey);
             addBlockToBlockchain(block);
         }
     }
+
 }

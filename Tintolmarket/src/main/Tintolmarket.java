@@ -13,8 +13,8 @@ import security.ClientSecurityManager;
  * Class that represents the client of the Tintolmarket application.
  * 
  * @author Tomás Correia | fc57102
- * @author Miguel Pato   | fc56372
- * @author João Vieira   | fc45677
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
  */
 public class Tintolmarket {
 
@@ -56,25 +56,27 @@ public class Tintolmarket {
                     userID = args[4];
 
                     // if(!trustStore.contains(".truststore")) {
-					// 	trustStore += ".truststore";
-					// }
-					// if(!keyStore.contains(".keystore")) {
-					// 	keyStore += ".keystore";
-					// }
+                    // trustStore += ".truststore";
+                    // }
+                    // if(!keyStore.contains(".keystore")) {
+                    // keyStore += ".keystore";
+                    // }
                     startClient(serverAddress, port, trustStore, keyStore, keyStorePassword, userID);
                 }
             }
 
         } catch (IncorrectParametersClientException e) {
             System.out.println("Failed to start client: " + e.getMessage());
-            System.out.println("Usage: Tintolmarket <server_address>:<port> <truststore> <keystore> <keystore_password> <user_id>");
+            System.out.println(
+                    "Usage: Tintolmarket <server_address>:<port> <truststore> <keystore> <keystore_password> <user_id>");
             System.out.println("Example: Tintolmarket localhost:12345 truststore keystore password1234 user1");
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static void startClient(String serverAddress, int port, String trustStore, String keyStore, String keyStorePassword, String userID ) throws Exception {
+    private static void startClient(String serverAddress, int port, String trustStore, String keyStore,
+            String keyStorePassword, String userID) throws Exception {
         SSLSocket SSLsocket = ClientSecurityManager.connect(serverAddress, port, trustStore);
 
         ObjectOutputStream outStream = new ObjectOutputStream(SSLsocket.getOutputStream());
@@ -85,7 +87,7 @@ public class Tintolmarket {
         ClientSecurityManager.authenticate(outStream, inStream, keyStore, keyStorePassword, userID);
 
         // Operation Menu
-        OperationMenu menu = new OperationMenu(outStream, inStream, keyStore, keyStorePassword, userID);
+        OperationMenu menu = new OperationMenu(outStream, inStream, userID);
         menu.showMenu();
         menu.receiveOperation(stdIn);
 

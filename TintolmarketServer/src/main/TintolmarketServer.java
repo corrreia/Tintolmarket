@@ -11,16 +11,16 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLServerSocket;
 
-import handlers.OperationHandler;
-import handlers.UserHandler;
-import security.ServerSecurityManager;
 import exceptions.IncorrectArgumentsServerException;
+import handlers.OperationHandler;
+import security.ServerSecurityManager;
+
 /**
  * Class that represents the server of the Tintolmarket application.
  * 
  * @author Tomás Correia | fc57102
- * @author Miguel Pato   | fc56372
- * @author João Vieira   | fc45677
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
  */
 public class TintolmarketServer {
 
@@ -35,9 +35,9 @@ public class TintolmarketServer {
 			String cipherPassword = args[args.length - 3];
 			String keyStoreName = args[args.length - 2];
 			String keyStorePassword = args[args.length - 1];
-			
+
 			server.startServer(port, cipherPassword, keyStoreName, keyStorePassword);
-	
+
 		} catch (NumberFormatException | IncorrectArgumentsServerException e) {
 			System.out.println("Fail to Start Server." + e);
 			System.out.println("Usage: TintolmarketServer 12345 password tintolmarket password\n");
@@ -45,18 +45,18 @@ public class TintolmarketServer {
 	}
 
 	public void startServer(int port, String cipherPassword, String keyStoreName, String keyStorePassword) {
-		SSLServerSocket SSLserverSocket = null;;
+		SSLServerSocket SSLserverSocket = null;
 
 		try {
 			SSLserverSocket = ServerSecurityManager.connect(port, keyStoreName, keyStorePassword);
 		} catch (IOException e) {
-			
+
 			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
 
-		while(true){
-			try{
+		while (true) {
+			try {
 				System.out.println("Waiting for connections...");
 				Socket socket = SSLserverSocket.accept();
 				System.out.println("Connection established with " + socket.getInetAddress().getHostAddress());

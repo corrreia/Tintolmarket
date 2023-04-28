@@ -8,6 +8,9 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.List;
 
+import objects.Transaction;
+import security.ClientSecurityManager;
+
 /**
  * Class that handles the operations input by the user and
  * sends them to the server.
@@ -24,8 +27,6 @@ public class OperationMenu {
     private ObjectInputStream inStream;
     private String username;
     private String operation;
-    private String keyStoreName;
-    private String keyStorePassword;
 
     /**
      * Constructor for the OperationMenu class.
@@ -34,12 +35,10 @@ public class OperationMenu {
      * @param inStream  The input stream of the user.
      * @param username  The username of the user.
      */
-    public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String keyStoreName, String keyStorePassword, String username) {
+    public OperationMenu(ObjectOutputStream outStream, ObjectInputStream inStream, String username) {
         this.outStream = outStream;
         this.inStream = inStream;
         this.username = username;
-        this.keyStoreName = keyStoreName;
-        this.keyStorePassword = keyStorePassword;
 
         this.operation = null;
     }
@@ -120,6 +119,16 @@ public class OperationMenu {
             int serverResponse = inStream.readInt();
             if (serverResponse == 0) {
                 System.out.println("Wine " + wine + " is now up for sale.");
+
+                // Transaction transaction = new Transaction(Transaction.Type.SELL, wine, Integer.parseInt(quantity),
+                //         Long.valueOf(value), username);
+
+                // transaction.sign(ClientSecurityManager.getPrivateKey());
+
+                // System.out.println(transaction);
+
+                // outStream.writeObject(transaction);
+
             } else if (serverResponse == -1) {
                 System.out.println("Wine " + wine + " does not exist. Please add the wine first and try again.");
             } else {
@@ -187,6 +196,12 @@ public class OperationMenu {
                 int serverResponse = inStream.readInt();
                 if (serverResponse == 0) {
                     System.out.println(quantity + " bottles of " + wine + " bought successfully.");
+
+                    // Transaction transaction = new Transaction(Transaction.Type.BUY, wine,
+                    //         Integer.parseInt(quantity),
+                    //         0.0, username);
+
+
                 } else if (serverResponse == -1) {
                     System.out.println("Wine " + wine + " does not exist. Please try again.");
 

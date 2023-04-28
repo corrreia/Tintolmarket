@@ -19,8 +19,7 @@
 			"mainClass": "main.Tintolmarket",
 			"projectName": "Tintolmarket",
 			"args": "localhost:12345 truststore Tintolmarket\\Clients\\User1\\User1Key 123456 User1"
-		}
-
+		},
 		{
 			"type": "java",
 			"name": "Tintolmarket tomas",

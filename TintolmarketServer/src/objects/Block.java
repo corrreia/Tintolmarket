@@ -1,4 +1,4 @@
-package blockchain;
+package objects;
 
 import java.io.Serializable;
 import java.security.*;
@@ -69,7 +69,7 @@ public class Block implements Serializable {
             signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privateKey);
             signature.update(data.getBytes());
-            blockSignature = signature.sign();
+            this.blockSignature = signature.sign();
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
             e.printStackTrace();
         }
@@ -91,12 +91,7 @@ public class Block implements Serializable {
 
     @Override
     public String toString() {
-        return "Block{" +
-                "blockNumber=" + blockNumber +
-                ", previousBlockHash='" + previousBlockHash + '\'' +
-                ", transactions=" + transactions.toString() +
-                ", blockHash='" + blockHash + '\'' +
-                ", blockSignature=" + bytesToHex(blockSignature) +
-                '}';
+        return "Block [blockHash=" + blockHash + ", blockNumber=" + blockNumber + ", previousBlockHash="
+                + previousBlockHash + ", transactions=" + transactions + ", blockSignature=" + blockSignature + "]";
     }
 }

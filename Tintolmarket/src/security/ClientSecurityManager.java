@@ -9,10 +9,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
@@ -28,13 +30,43 @@ public class ClientSecurityManager {
 
     private static final String KEY_STORE_TYPE = "PKCS12";
 
-    public static SSLSocket connect(String serverAddress, int port, String trustStore) throws UnknownHostException, IOException {
+    private static PrivateKey serverPrivateKey;
+    private static PublicKey serverPublicKey;
+
+    public static PrivateKey getPrivateKey() {
+        return serverPrivateKey;
+    }
+
+    public static PublicKey getPublicKey() {
+        return serverPublicKey;
+    }
+
+    public static SSLSocket connect(String serverAddress, int port, String trustStore)
+            throws UnknownHostException, IOException {
         return SSLClientConnection.getClientSSLSocket(serverAddress, port, trustStore);
     }
 
+    public static void loadKeystore(String keystorePath, String keystorePassword, String alias, String keyPassword)
+            throws Exception {
+        FileInputStream fis = new FileInputStream(keystorePath);
+        KeyStore keystore = KeyStore.getInstance("JKS");
+        keystore.load(fis, keystorePassword.toCharArray());
+
+        Key key = keystore.getKey(alias, keyPassword.toCharArray());
+        if (key instanceof PrivateKey) {
+            serverPrivateKey = (PrivateKey) key;
+        }
+
+        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(alias,
+                new KeyStore.PasswordProtection(keyPassword.toCharArray()));
+        serverPublicKey = privateKeyEntry.getCertificate().getPublicKey();
+    }
+
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String keyStore,
-            String keyStorePassword, String userID) throws IOException, ClassNotFoundException, InvalidKeyException, UnrecoverableKeyException, NoSuchAlgorithmException, SignatureException, KeyStoreException, CertificateException {
-        
+            String keyStorePassword, String userID)
+            throws IOException, ClassNotFoundException, InvalidKeyException, UnrecoverableKeyException,
+            NoSuchAlgorithmException, SignatureException, KeyStoreException, CertificateException {
+
         outStream.writeObject(userID);
         outStream.flush();
 
@@ -42,7 +74,7 @@ public class ClientSecurityManager {
         long nonceFromServer = inStream.readLong();
         int flag = inStream.readInt(); // 1 for registered user, 0 for new user
 
-        if(flag == 1){
+        if (flag == 1) {
             System.out.println("User already registered. Logging in...");
 
             // send signed nonce to server
@@ -54,8 +86,16 @@ public class ClientSecurityManager {
 
             // get servers response
             String response = (String) inStream.readObject();
-            if (response.equals("login")){
+            if (response.equals("login")) {
                 System.out.println("Login successful!\n" + "Welcome back " + userID + "!");
+
+                try {
+                    loadKeystore(keyStore, keyStorePassword, userID, keyStorePassword);
+                } catch (Exception e) {
+                    System.out.println("Error loading keystore");
+                    e.printStackTrace();
+                }
+
             } else {
                 System.out.println("Login failed for user " + userID + "!");
                 System.exit(-1);
@@ -77,8 +117,16 @@ public class ClientSecurityManager {
 
             // get servers response
             String response = (String) inStream.readObject();
-            if (response.equals("resgistered")){
+            if (response.equals("resgistered")) {
                 System.out.println("Registration successful!\n" + "Welcome " + userID + "!");
+
+                try {
+                    loadKeystore(keyStore, keyStorePassword, userID, keyStorePassword);
+                } catch (Exception e) {
+                    System.out.println("Error loading keystore");
+                    e.printStackTrace();
+                }
+
             } else {
                 System.out.println("Registration failed for user " + userID + "!");
                 System.exit(-1);
@@ -111,25 +159,28 @@ public class ClientSecurityManager {
         return userID + ".cer";
     }
 
-    private static byte[] signNonce(long nonceFromServer, String keyStore, String keyStorePassword, String userID) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException {
+    private static byte[] signNonce(long nonceFromServer, String keyStore, String keyStorePassword, String userID)
+            throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, UnrecoverableKeyException,
+            KeyStoreException, CertificateException, IOException {
         String alias = userID;
         PrivateKey privKey = getPrivateKey(keyStore, keyStorePassword, alias);
 
         Signature signature = Signature.getInstance("MD5withRSA");
         signature.initSign(privKey);
 
-
         byte[] nonceBytes = Long.toString(nonceFromServer).getBytes();
         signature.update(nonceBytes);
         return signature.sign();
     }
 
-    private static PrivateKey getPrivateKey(String keyStore, String keyStorePassword, String alias) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
+    private static PrivateKey getPrivateKey(String keyStore, String keyStorePassword, String alias)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
+            UnrecoverableKeyException {
         FileInputStream fis = new FileInputStream(keyStore);
         KeyStore ks = KeyStore.getInstance(KEY_STORE_TYPE);
         ks.load(fis, keyStorePassword.toCharArray());
 
         return (PrivateKey) ks.getKey(alias, keyStorePassword.toCharArray());
     }
-    
+
 }

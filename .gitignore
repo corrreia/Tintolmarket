@@ -5,3 +5,4 @@ users.txt
 *.jpg
 /bin/
 *.png
+credentials.txt

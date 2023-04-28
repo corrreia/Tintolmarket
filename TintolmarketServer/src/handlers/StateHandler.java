@@ -114,6 +114,7 @@ public class StateHandler {
             return USER_DOES_NOT_EXIST;
 
         users.get(user).addWineListing(new WineUser(wine, price, quantity));
+
         syncUsers();
         return SUCCESS; // Success
     }
