@@ -10,6 +10,13 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.util.Base64;
 
+/**
+ * Class that represents a transaction.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
+ */
 public class Transaction implements Serializable {
     private Type type;
     private String wineId;
@@ -17,11 +24,22 @@ public class Transaction implements Serializable {
     private double unitPrice;
     private String ownerId;
 
+    /**
+     * Enum that represents the type of the transaction.
+     */
     public enum Type {
         BUY,
         SELL
     }
 
+    /**
+     * Constructor for the Transaction class.
+     * @param type          Type of the transaction.
+     * @param wineId        Id of the wine.
+     * @param units         Units of the wine.
+     * @param unitPrice     Price of the wine.
+     * @param ownerId       Id of the owner.
+     */
     public Transaction(Type type, String wineId, int units, double unitPrice, String ownerId) {
         this.type = type;
         this.wineId = wineId;
@@ -30,26 +48,51 @@ public class Transaction implements Serializable {
         this.ownerId = ownerId;
     }
 
+    /**
+     * Method that gets the type of the transaction.
+     * @return  The type of the transaction.
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * Method that gets the id of the wine.
+     * @return  The id of the wine.
+     */
     public String getWineId() {
         return wineId;
     }
 
+    /**
+     *  Method that gets the units of the wine.
+     * @return  The units of the wine.
+     */
     public int getUnits() {
         return units;
     }
 
+    /**
+     * Method that gets the price of the wine.
+     * @return  The price of the wine.
+     */
     public double getUnitPrice() {
         return unitPrice;
     }
 
+    /**
+     * Method that gets the id of the owner.
+     * @return
+     */
     public String getOwnerId() {
         return ownerId;
     }
 
+    /**
+     * Method that signs the transaction.
+     * @param privateKey    Private key of the owner.
+     * @return  The signature of the transaction.
+     */
     public String sign(PrivateKey privateKey) {
         String sign = null;
         try {
@@ -64,6 +107,12 @@ public class Transaction implements Serializable {
         return sign;
     }
 
+    /**
+     * Method that verifies the signature of the transaction.
+     * @param publicKey    Public key of the owner.
+     * @param signatureText   Signature of the transaction.
+     * @return  True if the signature is valid, false otherwise.
+     */
     public boolean verifyTransactionSignature(PublicKey publicKey, String signatureText) {
         try {
             Signature signature = Signature.getInstance("SHA256withRSA");

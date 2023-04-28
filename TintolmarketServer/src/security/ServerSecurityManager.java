@@ -28,6 +28,13 @@ import handlers.BlockchainHandler;
 import handlers.UserHandler;
 import security.sslserverconnection.SSLServerConnection;
 
+/**
+ * Class that handles the security of the server.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
+ */
 public class ServerSecurityManager {
 
     private final static String SECURITY_DIRECTORY = "security" + File.separator;
@@ -36,6 +43,14 @@ public class ServerSecurityManager {
     private static PrivateKey serverPrivateKey;
     private static PublicKey serverPublicKey;
 
+    /**
+     * Method that starts the server
+     * @param port        The port to connect to.
+     * @param keyStoreName  The name of the keystore.
+     * @param keyStorePassword  The password of the keystore.
+     * @return  The SSLServerSocket.
+     * @throws IOException
+     */
     public static SSLServerSocket connect(int port, String keyStoreName, String keyStorePassword) throws IOException {
         try {
             loadKeystore(keyStoreName, keyStorePassword, "server", keyStorePassword);
@@ -49,6 +64,14 @@ public class ServerSecurityManager {
         return SSLServerConnection.getServerSSLSocket(port, keyStoreName, keyStorePassword);
     }
 
+    /**
+     * Method that loads the keystore.
+     * @param keystorePath  The path of the keystore.
+     * @param keystorePassword  The password of the keystore.
+     * @param alias The alias of the keystore.
+     * @param keyPassword   The password of the key.
+     * @throws Exception
+     */
     public static void loadKeystore(String keystorePath, String keystorePassword, String alias, String keyPassword)
             throws Exception {
         FileInputStream fis = new FileInputStream(keystorePath);
@@ -65,11 +88,27 @@ public class ServerSecurityManager {
         serverPublicKey = privateKeyEntry.getCertificate().getPublicKey();
     }
 
+    /**
+     * Method that generates a nonce.
+     * @return  The nonce.
+     */
     private static long generateNonce() {
         SecureRandom random = new SecureRandom();
         return Math.abs(random.nextLong());
     }
 
+    /**
+     * Method that verifies the nonce.
+     * @param signedNonce   The signed nonce.
+     * @param nonceFromUser The nonce from the user.
+     * @param userID    The user ID.
+     * @return  True if the nonce is verified, false otherwise.      
+     * @throws NoSuchAlgorithmException
+     * @throws FileNotFoundException
+     * @throws CertificateException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
     public static boolean verifyNonce(byte[] signedNonce, long nonceFromUser, String userID)
             throws NoSuchAlgorithmException, FileNotFoundException, CertificateException, InvalidKeyException,
             SignatureException {
@@ -81,6 +120,13 @@ public class ServerSecurityManager {
         return signature.verify(signedNonce);
     }
 
+    /**
+     * Method that gets the public key from the certificate.
+     * @param certificateName   The name of the certificate.
+     * @return  The public key.
+     * @throws CertificateException
+     * @throws FileNotFoundException
+     */
     public static PublicKey getPublicKeyFromCertificate(String certificateName)
             throws CertificateException, FileNotFoundException {
 
@@ -99,6 +145,13 @@ public class ServerSecurityManager {
         return certificate.getPublicKey();
     }
 
+    /**
+     * Method to receive a certificate.
+     * @param in    The input stream.
+     * @return  1 if the certificate is received, 0 otherwise.
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     public static int serverReceiveCertificate(ObjectInputStream in)
             throws ClassNotFoundException, IOException {
 
@@ -130,6 +183,13 @@ public class ServerSecurityManager {
         return 1;
     }
 
+    /**
+     * Method to authenticate a user.
+     * @param outStream     The output stream.
+     * @param inStream    The input stream.
+     * @param userID    The user ID.
+     * @throws Exception
+     */
     public static void authenticate(ObjectOutputStream outStream, ObjectInputStream inStream, String userID) throws Exception {
         long nonce = generateNonce();
 

@@ -16,6 +16,13 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * Class that handles the cipher modes.
+ * 
+ * @author Tomás Correia | fc57102
+ * @author Miguel Pato | fc56372
+ * @author João Vieira | fc45677
+ */
 public class CipherModes {
 
     private static final String PARAMS = "cipher.params";
@@ -23,6 +30,12 @@ public class CipherModes {
 
     private static final String ALGORITHM = "PBEWithHmacSHA256AndAES_128";
 
+    /**
+     * Method that encrypts a file.
+     * @param inputFile    File to encrypt.
+     * @param password    Password to encrypt the file.
+     * @throws Exception
+     */
     public static void encrypt(File inputFile, String password) throws Exception {
         File f = new File(inputFile.getAbsolutePath());
         if (!f.exists()) {
@@ -67,7 +80,11 @@ public class CipherModes {
         Files.delete(Paths.get(inputFile.getAbsolutePath()));
     }
     
-    
+    /**
+     * Method that decrypts a file.
+     * @param inputFile   File to decrypt.
+     * @throws Exception
+     */
     public static void decrypt(File inputFile) throws Exception {
         File file1 = new File(CIPHER_KEY);
         File file2 = new File("users.cif");
